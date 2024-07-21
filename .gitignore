@@ -1,5 +1,7 @@
-#ides
+#editors
 .vscode
 .idea
 
+#storage
 .DS_Store
+barecms.db

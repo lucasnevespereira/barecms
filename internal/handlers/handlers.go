@@ -1,13 +1,20 @@
 package handlers
 
 import (
+	"barecms/internal/services"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Status() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "OK"})
-	}
+type Handler struct {
+	Service *services.Service
+}
+
+func NewHandler(service *services.Service) *Handler {
+	return &Handler{Service: service}
+}
+
+func (h *Handler) Status(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
 }
