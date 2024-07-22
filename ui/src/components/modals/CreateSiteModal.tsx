@@ -46,7 +46,9 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({ dialogRef }) => {
             }
             console.log('Site created successfully');
             closeDialog();
-            window.location.reload();
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
         } catch (e: any) {
             console.error(e);
             setError(e.message || 'Failed to create site. Please try again.');

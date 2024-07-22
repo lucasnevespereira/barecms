@@ -25,13 +25,22 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
     setFormState(initialFormState);
   }, [fields]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormState(prevState => ({ ...prevState, [name]: value }));
   };
-  const onAddEntry = async (collectionId: string, entry: Record<string, any>) => {
+
+  const onAddEntry = async (collectionId: string, fields: Field[], entry: Record<string, any>) => {
     console.log("Creating entry", entry, collectionId);
-    const payload = JSON.stringify({ collectionId, data: entry });
+    // Prepare data with types
+    const dataWithTypes = fields.reduce((acc, field) => {
+      acc[field.name] = {
+        value: entry[field.name],
+        type: field.type
+      };
+      return acc;
+    }, {} as Record<string, { value: any; type: string }>);
+    const payload = JSON.stringify({ collectionId, data: dataWithTypes });
     console.log("payload", payload);
     return await fetch(`/api/entries`, {
       method: "POST",
@@ -51,16 +60,108 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
     setLoading(true);
     setError(null);
     try {
-      await onAddEntry(collectionId, formState);
+      await onAddEntry(collectionId, fields, formState);
+      closeDialog();
       setTimeout(() => {
-        closeDialog();
         window.location.reload();
-      }, 3000)
+      }, 300);
     } catch (e: any) {
       console.error(e);
       setError("Failed to create entry. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const renderFieldInput = (field: Field) => {
+    switch (field.type) {
+      case 'url':
+        return (
+          <input
+            type="url"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
+      case 'string':
+        return (
+          <input
+            type="text"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
+      case 'number':
+        return (
+          <input
+            type="number"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
+      case 'boolean':
+        return (
+          <select
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="select select-bordered w-full"
+            required
+          >
+            <option disabled selected>Select an option</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        );
+      case 'date':
+        return (
+          <input
+            type="date"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
+      case 'image':
+        return (
+          <input
+            type="url"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
+      default:
+        return (
+          <input
+            type="text"
+            id={field.name}
+            name={field.name}
+            value={formState[field.name]}
+            onChange={handleInputChange}
+            className="input input-bordered w-full"
+            required
+          />
+        );
     }
   };
 
@@ -75,15 +176,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
               <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor={field.name}>
                 {field.name} ({field.type})
               </label>
-              <input
-                type={field.type}
-                id={field.name}
-                name={field.name}
-                value={formState[field.name]}
-                onChange={handleInputChange}
-                className="input input-bordered w-full"
-                required
-              />
+              {renderFieldInput(field)}
             </div>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import EntryCard from "@/components/cards/EntryCard";
 import CreateEntryModal from "@/components/modals/CreateEntryModal";
 import { useFetch } from "@/hooks/useFetch";
 import { Collection, Entry } from "@/types";
@@ -53,9 +54,7 @@ const CollectionDetailsPage: React.FC = () => {
             {entries && entries.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                 {entries.map((entry) => (
-                  <div key={entry.id}>
-                    {JSON.stringify(entry)}
-                  </div>
+                  <EntryCard key={entry.id} data={entry.data} />
                 ))}
               </div>
             ) : (

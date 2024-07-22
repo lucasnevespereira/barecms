@@ -86,7 +86,9 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
         throw new Error(data.message);
       }
       closeDialog();
-      window.location.reload();
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     } catch (e: any) {
       console.error(e);
       setError(e.message || "Failed to create collection. Please try again.");
