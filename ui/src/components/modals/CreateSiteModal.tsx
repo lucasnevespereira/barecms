@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 interface CreateSiteModalProps {
     dialogRef: React.RefObject<HTMLDialogElement>;
 }
 
-const CreateSiteModal: React.FC<CreateSiteModalProps> = ({dialogRef}) => {
+const CreateSiteModal: React.FC<CreateSiteModalProps> = ({ dialogRef }) => {
     const [siteName, setSiteName] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -20,14 +20,14 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({dialogRef}) => {
         }
     };
 
-    const onCreateSite =  async (siteName: string) => {
+    const onCreateSite = async (siteName: string) => {
         return await fetch('/api/sites', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: siteName }),
-            });
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: siteName }),
+        });
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -60,23 +60,23 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({dialogRef}) => {
         <dialog className="modal" ref={dialogRef}>
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Create new site</h3>
-                    <input
-                        type="text"
-                        placeholder="Enter site name"
-                        className="input input-bordered w-full"
-                        value={siteName}
-                        onChange={handleSiteNameChange}
-                    />
-                    {error && <p className="text-red-500 mt-2">{error}</p>}
-                    <div className="modal-action">
-                        <button disabled={loading} onClick={handleSubmit} className="btn btn-primary">
-                            {loading ? 'Creating...' : 'Create'}
-                        </button>
-                        <button className="btn" onClick={closeDialog} >Cancel</button>
-                    </div>
+                <input
+                    type="text"
+                    placeholder="Enter site name"
+                    className="input input-bordered w-full"
+                    value={siteName}
+                    onChange={handleSiteNameChange}
+                />
+                {error && <p className="text-red-500 mt-2">{error}</p>}
+                <div className="modal-action">
+                    <button disabled={loading} onClick={handleSubmit} className="btn btn-primary">
+                        {loading ? 'Creating...' : 'Create'}
+                    </button>
+                    <button className="btn" onClick={closeDialog} >Cancel</button>
+                </div>
             </div>
         </dialog>
-)
+    )
 };
 
 export default CreateSiteModal;

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"barecms/internal/models"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -42,4 +43,14 @@ func (h *Handler) CreateSite(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "Site created!"})
+}
+
+func (h *Handler) DeleteSite(c *gin.Context) {
+	id := c.Param("id")
+	err := h.Service.DeleteSite(id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Site deleted!"})
 }

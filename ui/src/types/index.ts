@@ -1,21 +1,19 @@
-
-
-export interface Project {
-    id: number;
-    name: string;
-    description: string;
-    url: string;
-    image: string;
-}
-
 export interface Site {
     id: string;
     name: string;
-    slug: string
+    slug: string;
+    collections: Collection[];
 }
 
-export interface Article {
+export interface Collection {
     id: string;
-    title: string;
-    content: string;
+    name: string;
+    slug: string;
+    fields: Field[];
 }
+
+export interface Field {
+    name: string;
+    type: string;
+}
+

@@ -10,6 +10,8 @@ import (
 
 func Setup(service *services.Service) *gin.Engine {
 	router := gin.New()
+
+	// Serve static files
 	router.Use(static.Serve("/", static.LocalFile("./ui/dist", true)))
 	// Fallback to index.html for client-side routing
 	router.NoRoute(func(c *gin.Context) {
@@ -19,17 +21,14 @@ func Setup(service *services.Service) *gin.Engine {
 	api := router.Group("/api")
 	{
 		api.GET("/status", h.Status)
-
-		// sites
 		api.GET("/sites", h.GetSites)
 		api.GET("/sites/:id", h.GetSite)
 		api.POST("/sites", h.CreateSite)
+		api.DELETE("/sites/:id", h.DeleteSite)
+		api.GET("/sites/:id/collections", h.GetSiteCollections)
 
-		// projects
-		api.GET("/projects", h.GetProjects)
-
-		// articles
-		api.GET("/articles/:slug", h.GetArticle)
+		api.POST("/collections", h.CreateCollection)
+		api.GET("/collections/:id", h.GetCollection)
 	}
 
 	return router

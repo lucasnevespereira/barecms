@@ -45,6 +45,13 @@ func (s *Service) CreateSite(request models.CreateSiteRequest) error {
 	return nil
 }
 
+func (s *Service) DeleteSite(id string) error {
+	if err := s.Storage.DeleteSite(id); err != nil {
+		return err
+	}
+	return nil
+}
+
 func mapToSiteDB(site models.Site) storage.SiteDB {
 	return storage.SiteDB{
 		ID:   site.ID,
@@ -54,25 +61,10 @@ func mapToSiteDB(site models.Site) storage.SiteDB {
 }
 
 func mapToSite(siteDB storage.SiteDB) models.Site {
-	var projects []models.Project
-	for _, dbProject := range siteDB.Projects {
-		projects = append(projects, mapToProject(dbProject))
-	}
 
 	return models.Site{
-		ID:       siteDB.ID,
-		Name:     siteDB.Name,
-		Slug:     siteDB.Slug,
-		Projects: projects,
-	}
-}
-
-func mapToProject(projectDB storage.ProjectDB) models.Project {
-	return models.Project{
-		ID:          projectDB.ID,
-		Description: projectDB.Description,
-		Image:       projectDB.Image,
-		URL:         projectDB.URL,
-		SiteID:      projectDB.SiteID,
+		ID:   siteDB.ID,
+		Name: siteDB.Name,
+		Slug: siteDB.Slug,
 	}
 }
