@@ -7,16 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) CreateCollection(c *gin.Context) {
-	var req models.CreateCollectionRequest
-
-	if err := c.ShouldBindJSON(&req); err != nil {
+func (h *Handler) CreateEntry(c *gin.Context) {
+	var request models.CreateEntryRequest
+	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := h.Service.CreateCollection(req)
-	if err != nil {
+	if err := h.Service.CreateEntry(&request); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -24,26 +22,26 @@ func (h *Handler) CreateCollection(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Collection created!"})
 }
 
-func (h *Handler) GetCollection(c *gin.Context) {
+func (h *Handler) GetEntry(c *gin.Context) {
 	id := c.Param("id")
 
-	collection, err := h.Service.GetCollectionByID(id)
+	entry, err := h.Service.GetEntryByID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, collection)
+	c.JSON(http.StatusOK, entry)
 }
 
-func (h *Handler) GetSiteCollections(c *gin.Context) {
+func (h *Handler) GetCollectionEntries(c *gin.Context) {
 	id := c.Param("id")
 
-	collections, err := h.Service.GetCollectionsBySiteID(id)
+	entries, err := h.Service.GetEntriesByCollectionID(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"collections": collections})
+	c.JSON(http.StatusOK, entries)
 }

@@ -1,12 +1,13 @@
 import CreateEntryModal from "@/components/modals/CreateEntryModal";
 import { useFetch } from "@/hooks/useFetch";
-import { Collection } from "@/types";
+import { Collection, Entry } from "@/types";
 import { useRef } from "react";
 import { useParams } from "react-router-dom";
 
 const CollectionDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: collection, loading, error } = useFetch<Collection>(`/api/collections/${id}`);
+  const { data: entries, loading: entriesLoading, error: entriesError } = useFetch<Entry[]>(`/api/collections/${id}/entries`);
   const entryModalRef = useRef<HTMLDialogElement>(null);
   const openEntryModal = () => {
     if (entryModalRef.current) {
@@ -47,6 +48,20 @@ const CollectionDetailsPage: React.FC = () => {
               <h3 className="text-xl font-semibold">Entries</h3>
               <button className="btn btn-dark" onClick={openEntryModal}>+ New Entry</button>
             </div>
+            {entriesLoading && <p>Loading entries...</p>}
+            {entriesError && <p className="text-red-500">{entriesError}</p>}
+            {entries && entries.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                {entries.map((entry) => (
+                  <div key={entry.id}>
+                    {JSON.stringify(entry)}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3">No entries found</p>
+            )}
+
             <CreateEntryModal dialogRef={entryModalRef} collectionId={collection.id} fields={collection.fields} />
           </div>
         </div>

@@ -29,6 +29,10 @@ func Setup(service *services.Service) *gin.Engine {
 
 		api.POST("/collections", h.CreateCollection)
 		api.GET("/collections/:id", h.GetCollection)
+		api.GET("/collections/:id/entries", h.GetCollectionEntries)
+
+		api.POST("/entries", h.CreateEntry)
+		api.GET("/entries/:id", h.GetEntry)
 	}
 
 	return router

@@ -11,7 +11,6 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
-  console.log("collectionId", collectionId);
   const closeDialog = () => {
     if (dialogRef.current) {
       dialogRef.current.close();
@@ -32,16 +31,15 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
   };
   const onAddEntry = async (collectionId: string, entry: Record<string, any>) => {
     console.log("Creating entry", entry, collectionId);
-    const payload = JSON.stringify({ collectionId, entry });
+    const payload = JSON.stringify({ collectionId, data: entry });
     console.log("payload", payload);
-    return
-    // return await fetch(`/api/entries`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: payload,
-    // });
+    return await fetch(`/api/entries`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    });
   }
   const handleSubmit = async () => {
     const hasEmptyFields = fields.some(field => formState[field.name].trim() === '');
@@ -54,7 +52,10 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
     setError(null);
     try {
       await onAddEntry(collectionId, formState);
-      // closeDialog();
+      setTimeout(() => {
+        closeDialog();
+        window.location.reload();
+      }, 3000)
     } catch (e: any) {
       console.error(e);
       setError("Failed to create entry. Please try again.");
