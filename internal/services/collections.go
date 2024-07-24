@@ -45,6 +45,19 @@ func (s *Service) GetCollectionsBySiteID(siteID string) ([]models.Collection, er
 
 }
 
+func (s *Service) DeleteCollection(collectionID string) error {
+
+	if err := s.Storage.DeleteCollection(collectionID); err != nil {
+		return err
+	}
+
+	if err := s.Storage.DeleteEntriesByCollectionIDs([]string{collectionID}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func mapToCollectionDB(collection models.Collection) storage.CollectionDB {
 	return storage.CollectionDB{
 		ID:     collection.ID,

@@ -46,7 +46,28 @@ func (s *Service) CreateSite(request models.CreateSiteRequest) error {
 }
 
 func (s *Service) DeleteSite(id string) error {
+
 	if err := s.Storage.DeleteSite(id); err != nil {
+		return err
+	}
+
+	// Delete collections associated with the site ID
+	siteCollections, err := s.Storage.GetCollectionsBySiteID(id)
+	if err != nil {
+		return err
+	}
+	var collectionIds []string
+	for _, collection := range siteCollections {
+		collectionIds = append(collectionIds, collection.ID)
+	}
+
+	// Delete entries associated with the collection IDs
+	if err := s.Storage.DeleteEntriesByCollectionIDs(collectionIds); err != nil {
+		return err
+	}
+
+	// Delete collections
+	if err := s.Storage.DeleteCollectionsBySiteID(id); err != nil {
 		return err
 	}
 	return nil

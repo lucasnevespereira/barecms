@@ -21,6 +21,7 @@ func Setup(service *services.Service) *gin.Engine {
 	api := router.Group("/api")
 	{
 		api.GET("/status", h.Status)
+
 		api.GET("/sites", h.GetSites)
 		api.GET("/sites/:id", h.GetSite)
 		api.POST("/sites", h.CreateSite)
@@ -29,10 +30,12 @@ func Setup(service *services.Service) *gin.Engine {
 
 		api.POST("/collections", h.CreateCollection)
 		api.GET("/collections/:id", h.GetCollection)
+		api.DELETE("/collections/:id", h.DeleteCollection)
 		api.GET("/collections/:id/entries", h.GetCollectionEntries)
 
 		api.POST("/entries", h.CreateEntry)
 		api.GET("/entries/:id", h.GetEntry)
+		api.DELETE("/entries/:id", h.DeleteEntry)
 	}
 
 	return router

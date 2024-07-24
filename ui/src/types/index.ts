@@ -9,6 +9,7 @@ export interface Collection {
     id: string;
     name: string;
     slug: string;
+    siteId: string;
     fields: Field[];
     entries: Entry[];
 }

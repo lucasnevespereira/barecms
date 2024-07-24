@@ -40,6 +40,10 @@ func (s *Service) GetEntriesByCollectionID(collectionID string) ([]models.Entry,
 	return entries, nil
 }
 
+func (s *Service) DeleteEntry(id string) error {
+	return s.Storage.DeleteEntry(id)
+}
+
 func mapToEntryDB(entry models.Entry) storage.EntryDB {
 	return storage.EntryDB{
 		ID:           entry.ID,

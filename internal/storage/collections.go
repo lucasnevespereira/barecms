@@ -34,3 +34,19 @@ func (s *Storage) GetCollectionsBySiteID(siteID string) ([]CollectionDB, error) 
 	}
 	return collections, nil
 }
+
+func (s *Storage) DeleteCollection(id string) error {
+	deleted := s.DB.Where("id = ?", id).Delete(&CollectionDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}
+
+func (s *Storage) DeleteCollectionsBySiteID(siteId string) error {
+	deleted := s.DB.Where("site_id = ?", siteId).Delete(&CollectionDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}

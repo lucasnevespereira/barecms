@@ -25,3 +25,19 @@ func (s *Storage) GetEntriesByCollectionID(collectionID string) ([]EntryDB, erro
 	}
 	return entries, nil
 }
+
+func (s *Storage) DeleteEntry(id string) error {
+	deleted := s.DB.Where("id = ?", id).Delete(&EntryDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}
+
+func (s *Storage) DeleteEntriesByCollectionIDs(collectionIDs []string) error {
+	deleted := s.DB.Where("collection_id IN (?)", collectionIDs).Delete(&EntryDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}

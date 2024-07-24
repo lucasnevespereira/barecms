@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import CreateCollectionModal from "@/components/modals/CreateCollectionModal";
 import { useGetSite } from "@/hooks/useGetSite";
 import { useGetCollections } from "@/hooks/useGetCollections";
+import Loader from "@/components/Loader";
+import useDelete from "@/hooks/useDelete";
 
 
 
@@ -10,6 +12,7 @@ const SiteDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { site, loading, error } = useGetSite(`/api/sites/${id}`);
     const { collections } = useGetCollections(`/api/sites/${id}/collections`);
+    const { isDeleting, error: deleteError, handleDelete } = useDelete(`/api/sites/${id}`, "/");
     const collectionModalRef = useRef<HTMLDialogElement>(null);
     const openCollectionModal = () => {
         if (collectionModalRef.current) {
@@ -17,14 +20,14 @@ const SiteDetailsPage: React.FC = () => {
         }
     };
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p className="text-red-500">{error}</p>;
+    if (loading || isDeleting) return <Loader size="lg" />;
+    if (error || deleteError) return <p className="text-red-500">{error}</p>;
 
     return (
         <main className='py-10 min-h-[600px]'>
             <div className="w-full flex justify-between items-center">
                 <h2 className={"text-xl font-bold"}>Site Details</h2>
-                <button className="btn btn-outline" >Remove Site</button>
+                <button className="btn btn-outline" onClick={handleDelete} >Remove Site</button>
             </div>
             {site ? (
                 <div className="w-full">

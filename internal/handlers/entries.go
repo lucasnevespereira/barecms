@@ -45,3 +45,15 @@ func (h *Handler) GetCollectionEntries(c *gin.Context) {
 
 	c.JSON(http.StatusOK, entries)
 }
+
+func (h *Handler) DeleteEntry(c *gin.Context) {
+	id := c.Param("id")
+
+	err := h.Service.DeleteEntry(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Entry deleted!"})
+}
