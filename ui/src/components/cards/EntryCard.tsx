@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useDelete from '@/hooks/useDelete';
 import { Trash } from 'lucide-react';
 import Loader from '@/components/Loader';
@@ -9,13 +10,14 @@ interface EntryData {
 }
 
 interface EntryCardProps {
+  siteId: string;
   collectionId: string;
   entryId: string;
   data: Record<string, EntryData>;
 }
 
-const EntryCard: React.FC<EntryCardProps> = ({ collectionId, entryId, data }) => {
-  const { isDeleting, error, handleDelete } = useDelete(`/api/entries/${entryId}`, `/collections/${collectionId}`);
+const EntryCard: React.FC<EntryCardProps> = ({ collectionId, siteId, entryId, data }) => {
+  const { isDeleting, error, handleDelete } = useDelete(`/api/entries/${entryId}`, `/sites/${siteId}/collections/${collectionId}`);
 
   return (
     <div className="card p-4 border rounded-lg shadow-md">

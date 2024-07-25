@@ -20,7 +20,11 @@ const HomePage: React.FC = () => {
         <main className='py-10 min-h-[600px]'>
             <div>
                 <div className="w-full flex justify-between items-center">
-                    <h2 className={"text-xl font-bold"}>My Sites</h2>
+                    <div className="breadcrumbs text-lg">
+                        <ul>
+                            <li><a href="/">My Sites</a></li>
+                        </ul>
+                    </div>
                     <button className="btn btn-dark" onClick={openModal}>+ New Site</button>
                 </div>
                 {data && data.sites.length === 0 && <p className={"mt-3"}>You don't have any sites yet</p>}

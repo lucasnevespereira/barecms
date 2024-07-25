@@ -6,29 +6,36 @@ import { useGetCollections } from "@/hooks/useGetCollections";
 import Loader from "@/components/Loader";
 import useDelete from "@/hooks/useDelete";
 
-
-
 const SiteDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
-    const { site, loading, error } = useGetSite(`/api/sites/${id}`);
-    const { collections } = useGetCollections(`/api/sites/${id}/collections`);
-    const { isDeleting, error: deleteError, handleDelete } = useDelete(`/api/sites/${id}`, "/");
+    const { site, loading } = useGetSite(`/api/sites/${id}`);
+    const { collections } = useGetCollections(`/api/sites/${site?.id}/collections`);
+    const { isDeleting, handleDelete } = useDelete(`/api/sites/${id}`, "/");
     const collectionModalRef = useRef<HTMLDialogElement>(null);
     const openCollectionModal = () => {
         if (collectionModalRef.current) {
             collectionModalRef.current.showModal();
         }
     };
-
-    if (loading || isDeleting) return <Loader size="lg" />;
-    if (error || deleteError) return <p className="text-red-500">{error}</p>;
-
     return (
         <main className='py-10 min-h-[600px]'>
             <div className="w-full flex justify-between items-center">
-                <h2 className={"text-xl font-bold"}>Site Details</h2>
-                <button className="btn btn-outline" onClick={handleDelete} >Remove Site</button>
+                <div className="breadcrumbs text-lg">
+                    <ul>
+                        <li><a href="/">My Sites</a></li>
+                        <li><a href={`/sites/${id}`}>{site?.name}</a></li>
+                    </ul>
+                </div>
+                <div className="dropdown">
+                    <div tabIndex={0} role="button" className="btn btn-sm btn-outline">Settings</div>
+                    <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-40 shadow">
+                        <li className="text-sm">
+                            <span onClick={handleDelete}>Delete Site</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
+            {loading || isDeleting && <Loader size="lg" />}
             {site ? (
                 <div className="w-full">
                     <h2 className="text-2xl font-semibold mb-2">{site.name}</h2>
@@ -46,7 +53,7 @@ const SiteDetailsPage: React.FC = () => {
                                     <div key={collection.id} className="card w-full mx-auto border border-gray-200 p-5 mt-3 rounded cursor-pointer">
                                         <h3 className="card-title font-bold">{collection.name}</h3>
                                         <p className="text-sm">{collection.slug}</p>
-                                        <a className="link flex justify-end" href={`/collections/${collection.id}`}>view</a>
+                                        <a className="link flex justify-end" href={`/sites/${site.id}/collections/${collection.id}`}>view</a>
                                     </div>
                                 ))}
                             </div>
@@ -57,7 +64,7 @@ const SiteDetailsPage: React.FC = () => {
                     </div>
                 </div>
             ) : (
-                <p>No site found</p>
+                <Loader size="lg" />
             )}
         </main>
     );

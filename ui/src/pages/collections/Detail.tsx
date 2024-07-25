@@ -3,32 +3,46 @@ import Loader from "@/components/Loader";
 import CreateEntryModal from "@/components/modals/CreateEntryModal";
 import useDelete from "@/hooks/useDelete";
 import { useFetch } from "@/hooks/useFetch";
+import { useGetSite } from "@/hooks/useGetSite";
 import { Collection, Entry } from "@/types";
 import { useRef } from "react";
 import { useParams } from "react-router-dom";
 
 const CollectionDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: collection, loading, error } = useFetch<Collection>(`/api/collections/${id}`);
+  const { siteId } = useParams<{ siteId: string }>();
+  const { data: collection, loading } = useFetch<Collection>(`/api/collections/${id}`);
   const { data: entries, loading: entriesLoading, error: entriesError } = useFetch<Entry[]>(`/api/collections/${id}/entries`);
-  console.log("collection", collection);
-  const siteID = collection?.siteId as string;
-  const { isDeleting, error: deleteError, handleDelete } = useDelete(`/api/collections/${id}`, `/sites/${siteID}`);
+  const { site } = useGetSite(`/api/sites/${siteId}`);
+  const { isDeleting, handleDelete } = useDelete(`/api/collections/${id}`, `/sites/${siteId}`);
   const entryModalRef = useRef<HTMLDialogElement>(null);
   const openEntryModal = () => {
     if (entryModalRef.current) {
       entryModalRef.current.showModal();
     }
   };
-  if (loading || isDeleting) return <Loader size="lg" />;
-  if (error || deleteError) return <p className="text-red-500">{error}</p>;
+
   return (
     <main className='py-10 min-h-[600px]'>
       <div className="w-full flex justify-between items-center">
-        <h2 className={"text-2xl font-bold"}>{collection?.name || "Collection Details"}</h2>
-        <button className="btn btn-error btn-outline" onClick={handleDelete}>Delete Collection</button>
+        <div className="breadcrumbs text-lg">
+          <ul>
+            <li><a>My Sites</a></li>
+            <li><a href={`/sites/${siteId}`}>{site?.name || 'Site'}</a></li>
+            <li><a href={`/sites/${siteId}/collections/${id}`}>{collection?.name}</a></li>
+          </ul>
+        </div>
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-sm btn-outline">Settings</div>
+          <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-40 shadow">
+            <li className="text-sm">
+              <span onClick={handleDelete}>Delete Collection</span>
+            </li>
+          </ul>
+        </div>
       </div>
 
+      {loading || isDeleting && <Loader size="lg" />}
       {collection && (
         <div className="w-full">
           <p className="text-gray-600 mb-4">Id: {collection.id}</p>
@@ -59,7 +73,7 @@ const CollectionDetailsPage: React.FC = () => {
             {entries && entries.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                 {entries.map((entry) => (
-                  <EntryCard collectionId={collection.id} entryId={entry.id} data={entry.data} />
+                  <EntryCard siteId={siteId as string} collectionId={collection.id} entryId={entry.id} data={entry.data} />
                 ))}
               </div>
             ) : (
