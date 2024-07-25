@@ -26,7 +26,7 @@ const EntryCard: React.FC<EntryCardProps> = ({ collectionId, siteId, entryId, da
       {Object.entries(data).map(([key, { value, type }]) => (
         <div key={key} className="mb-2">
           {type === 'string' && <p><strong>{key}:</strong> {value}</p>}
-          {type === 'image' && <img src={value} alt={value} className="w-full h-auto" />}
+          {type === 'image' && <img src={value} alt={value} className="h-auto max-w-[150px]" />}
           {type === 'date' && <p><strong>{key}:</strong> {value}</p>}
           {type === 'number' && <p><strong>{key}:</strong> {value}</p>}
           {type === 'boolean' && <p><strong>{key}:</strong> {value ? 'True' : 'False'}</p>}

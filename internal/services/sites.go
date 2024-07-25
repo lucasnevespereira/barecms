@@ -33,9 +33,10 @@ func (s *Service) GetSite(id string) (models.Site, error) {
 
 func (s *Service) CreateSite(request models.CreateSiteRequest) error {
 	newSite := models.Site{
-		ID:   utils.GenerateUniqueID(),
-		Name: request.Name,
-		Slug: utils.Slugify(request.Name),
+		ID:     utils.GenerateUniqueID(),
+		Name:   request.Name,
+		Slug:   utils.Slugify(request.Name),
+		UserID: request.UserID,
 	}
 	siteDB := mapToSiteDB(newSite)
 	if err := s.Storage.CreateSite(siteDB); err != nil {
@@ -75,9 +76,10 @@ func (s *Service) DeleteSite(id string) error {
 
 func mapToSiteDB(site models.Site) storage.SiteDB {
 	return storage.SiteDB{
-		ID:   site.ID,
-		Name: site.Name,
-		Slug: site.Slug,
+		ID:     site.ID,
+		Name:   site.Name,
+		Slug:   site.Slug,
+		UserID: site.UserID,
 	}
 }
 

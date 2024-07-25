@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 interface CreateSiteModalProps {
+    userId: string;
     dialogRef: React.RefObject<HTMLDialogElement>;
 }
 
-const CreateSiteModal: React.FC<CreateSiteModalProps> = ({ dialogRef }) => {
+const CreateSiteModal: React.FC<CreateSiteModalProps> = ({ userId, dialogRef }) => {
     const [siteName, setSiteName] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({ dialogRef }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name: siteName }),
+            body: JSON.stringify({ name: siteName, userId }),
         });
     };
 

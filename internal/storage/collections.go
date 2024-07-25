@@ -50,3 +50,20 @@ func (s *Storage) DeleteCollectionsBySiteID(siteId string) error {
 	}
 	return nil
 }
+
+func (s *Storage) GetCollectionsFromSitesIDs(siteIDs []string) ([]CollectionDB, error) {
+	var collections []CollectionDB
+	retrieved := s.DB.Where("site_id IN (?)", siteIDs).Find(&collections)
+	if retrieved.Error != nil {
+		return nil, retrieved.Error
+	}
+	return collections, nil
+}
+
+func (s *Storage) DeleteCollectionsBySiteIDs(siteIds []string) error {
+	deleted := s.DB.Where("site_id IN (?)", siteIds).Delete(&CollectionDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}
