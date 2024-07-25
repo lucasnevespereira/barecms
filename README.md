@@ -2,7 +2,7 @@
 
 **BareCMS** is an open-source Content Management System with the bare minimal.
 
-![](assets/demo.gif)
+![](assets/rec.gif)
 
 ## Technologies
 

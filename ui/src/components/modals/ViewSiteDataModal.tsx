@@ -36,7 +36,7 @@ const ViewSiteDataModal: React.FC<ViewSiteDataModalProps> = ({ siteSlug, dialogR
               <h3 className="font-bold text-lg">Site Data</h3>
               <Clipboard className="cursor-pointer" onClick={copyToClipboard} />
             </div>
-            <div className="overflow-auto max-h-[600px] mt-2">
+            <div className="overflow-auto max-h-[550px] mt-2">
               <pre className="pretty-json"><code>{JSON.stringify(data, null, 2)}</code></pre>
             </div>
           </div>
