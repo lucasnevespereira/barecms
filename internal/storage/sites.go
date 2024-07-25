@@ -33,3 +33,20 @@ func (s *Storage) DeleteSite(id string) error {
 	}
 	return nil
 }
+
+func (s *Storage) DeleteSitesByUserID(userID string) error {
+	deleted := s.DB.Where("user_id = ?", userID).Delete(&SiteDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}
+
+func (s *Storage) GetSitesByUserID(userID string) ([]SiteDB, error) {
+	var sites []SiteDB
+	retrieved := s.DB.Where("user_id = ?", userID).Find(&sites)
+	if retrieved.Error != nil {
+		return nil, retrieved.Error
+	}
+	return sites, nil
+}

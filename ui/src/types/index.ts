@@ -26,3 +26,9 @@ export interface Entry {
     data: Record<string, any>;
 }
 
+export interface User {
+    id: string;
+    email: string;
+    username: string;
+}
+

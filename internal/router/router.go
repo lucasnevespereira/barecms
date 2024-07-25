@@ -36,6 +36,12 @@ func Setup(service *services.Service) *gin.Engine {
 		api.POST("/entries", h.CreateEntry)
 		api.GET("/entries/:id", h.GetEntry)
 		api.DELETE("/entries/:id", h.DeleteEntry)
+
+		auth := api.Group("/auth")
+		auth.POST("/register", h.Register)
+		auth.POST("/login", h.Login)
+		auth.GET("/user", h.GetUser)
+		auth.DELETE("/user/:userId", h.DeleteUser)
 	}
 
 	return router
