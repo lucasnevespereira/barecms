@@ -34,11 +34,16 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
 
   const addField = () => {
     if (newFieldName.trim() === "") {
-      setError("Field name cannot be empty.");
+      setFieldsError("Field name cannot be empty.");
       return;
     }
 
-    setFields([...fields, { name: newFieldName, type: newFieldType }]);
+    if (fields.find((field) => field.name === newFieldName.trim().toLowerCase())) {
+      setFieldsError("Field name must be unique.");
+      return;
+    }
+
+    setFields([...fields, { name: newFieldName.trim().toLowerCase(), type: newFieldType.trim().toLowerCase() }]);
     setNewFieldName("");
     setNewFieldType("string");
   };

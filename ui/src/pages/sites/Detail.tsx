@@ -5,6 +5,7 @@ import { useGetSite } from "@/hooks/useGetSite";
 import { useGetCollections } from "@/hooks/useGetCollections";
 import Loader from "@/components/Loader";
 import useDelete from "@/hooks/useDelete";
+import ViewSiteDataModal from "@/components/modals/ViewSiteDataModal";
 
 const SiteDetailsPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -12,9 +13,16 @@ const SiteDetailsPage: React.FC = () => {
     const { collections } = useGetCollections(`/api/sites/${site?.id}/collections`);
     const { isDeleting, handleDelete } = useDelete(`/api/sites/${id}`, "/");
     const collectionModalRef = useRef<HTMLDialogElement>(null);
+    const viewDataModalRef = useRef<HTMLDialogElement>(null);
     const openCollectionModal = () => {
         if (collectionModalRef.current) {
             collectionModalRef.current.showModal();
+        }
+    };
+    const openDataModal = () => {
+        if (viewDataModalRef.current) {
+            console.log("Opening data modal");
+            viewDataModalRef.current.showModal();
         }
     };
     return (
@@ -26,13 +34,16 @@ const SiteDetailsPage: React.FC = () => {
                         <li><a href={`/sites/${id}`}>{site?.name}</a></li>
                     </ul>
                 </div>
-                <div className="dropdown">
-                    <div tabIndex={0} role="button" className="btn btn-sm btn-outline">Settings</div>
-                    <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-40 shadow">
-                        <li className="text-sm">
-                            <span onClick={handleDelete}>Delete Site</span>
-                        </li>
-                    </ul>
+                <div className="actions flex items-center gap-2">
+                    <button className="btn btn-sm btn-primary" onClick={openDataModal}>View Site Data</button>
+                    <div className="dropdown">
+                        <div tabIndex={0} role="button" className="btn btn-sm btn-outline">Settings</div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-40 shadow">
+                            <li className="text-sm">
+                                <span onClick={handleDelete}>Delete Site</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             {loading || isDeleting && <Loader size="lg" />}
@@ -45,7 +56,7 @@ const SiteDetailsPage: React.FC = () => {
                     <div className="collections-container flex flex-col gap-5">
                         <div className="w-full flex justify-between items-center mt-6">
                             <h3 className="text-xl font-semibold">Collections</h3>
-                            <button className="btn btn-dark" onClick={openCollectionModal}>+ New Collection</button>
+                            <button className="btn" onClick={openCollectionModal}>+ New Collection</button>
                         </div>
                         {collections && collections.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
@@ -62,6 +73,7 @@ const SiteDetailsPage: React.FC = () => {
                         )}
                         <CreateCollectionModal dialogRef={collectionModalRef} siteId={site.id} />
                     </div>
+                    <ViewSiteDataModal dialogRef={viewDataModalRef} siteSlug={site.slug} />
                 </div>
             ) : (
                 <Loader size="lg" />

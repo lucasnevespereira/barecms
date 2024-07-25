@@ -22,6 +22,8 @@ func Setup(service *services.Service) *gin.Engine {
 	{
 		api.GET("/status", h.Status)
 
+		api.GET("/:siteSlug/data", h.GetSiteData)
+
 		api.GET("/sites", h.GetSites)
 		api.GET("/sites/:id", h.GetSite)
 		api.POST("/sites", h.CreateSite)

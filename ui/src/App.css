@@ -7,3 +7,14 @@
   font-size: 1em;
   font-weight: bold;
 }
+
+.pretty-json {
+  background-color: #f6f8fa;
+  color: #333;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  overflow-x: auto;
+  font-family: "Courier New", Courier, monospace;
+  white-space: pre-wrap;
+}

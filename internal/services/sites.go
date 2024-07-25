@@ -4,6 +4,8 @@ import (
 	"barecms/internal/models"
 	"barecms/internal/storage"
 	"barecms/internal/utils"
+	"encoding/json"
+	"fmt"
 )
 
 func (s *Service) GetSites() ([]models.Site, error) {
@@ -84,10 +86,79 @@ func mapToSiteDB(site models.Site) storage.SiteDB {
 }
 
 func mapToSite(siteDB storage.SiteDB) models.Site {
-
 	return models.Site{
 		ID:   siteDB.ID,
 		Name: siteDB.Name,
 		Slug: siteDB.Slug,
 	}
+}
+
+func (s *Service) GetSiteData(slug string) (*models.SiteData, error) {
+	// Get site by slug
+	siteDB, err := s.Storage.GetSiteBySlug(slug)
+	if err != nil {
+		return nil, err
+	}
+
+	siteData := models.SiteData{
+		ID:   siteDB.ID,
+		Name: siteDB.Name,
+		Slug: siteDB.Slug,
+	}
+
+	// Get collections by site ID
+	collectionsDB, err := s.Storage.GetCollectionsBySiteID(siteDB.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	mData := make(map[string]interface{})
+	for _, collectionDB := range collectionsDB {
+		// Get entries by collection ID
+		entriesDB, err := s.Storage.GetEntriesByCollectionID(collectionDB.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		var entries []map[string]interface{}
+		for _, entryDB := range entriesDB {
+			var entryData map[string]interface{}
+			if err := json.Unmarshal(entryDB.Data, &entryData); err != nil {
+				return nil, err
+			}
+
+			transformedData, err := transformEntryData(entryData)
+			if err != nil {
+				return nil, err
+			}
+
+			entries = append(entries, transformedData)
+		}
+
+		mData[collectionDB.Slug] = entries
+	}
+
+	siteData.Data = mData
+
+	return &siteData, nil
+}
+
+func transformEntryData(entryData map[string]interface{}) (map[string]interface{}, error) {
+	transformedData := make(map[string]interface{})
+
+	for key, value := range entryData {
+		field, ok := value.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("invalid format for field %s", key)
+		}
+
+		val, ok := field["value"]
+		if !ok {
+			return nil, fmt.Errorf("missing 'value' for field %s", key)
+		}
+
+		transformedData[key] = val
+	}
+
+	return transformedData, nil
 }

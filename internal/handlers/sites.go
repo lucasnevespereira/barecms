@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"barecms/internal/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,4 +54,16 @@ func (h *Handler) DeleteSite(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"message": "Site deleted!"})
+}
+
+func (h *Handler) GetSiteData(c *gin.Context) {
+	slug := c.Param("siteSlug")
+
+	siteData, err := h.Service.GetSiteData(slug)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, siteData)
 }

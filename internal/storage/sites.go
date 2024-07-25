@@ -50,3 +50,12 @@ func (s *Storage) GetSitesByUserID(userID string) ([]SiteDB, error) {
 	}
 	return sites, nil
 }
+
+func (s *Storage) GetSiteBySlug(slug string) (SiteDB, error) {
+	var site SiteDB
+	retrieved := s.DB.Where("slug = ?", slug).First(&site)
+	if retrieved.Error != nil {
+		return SiteDB{}, retrieved.Error
+	}
+	return site, nil
+}

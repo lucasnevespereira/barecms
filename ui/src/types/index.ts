@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Site {
     id: string;
     name: string;
@@ -30,5 +29,12 @@ export interface User {
     id: string;
     email: string;
     username: string;
+}
+
+export interface SiteData {
+    id: string;
+    name: string;
+    slug: string;
+    data: any;
 }
 
