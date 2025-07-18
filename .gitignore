@@ -1,6 +1,7 @@
 #editors
 .vscode
 .idea
+.zed
 
 #storage
 .DS_Store
