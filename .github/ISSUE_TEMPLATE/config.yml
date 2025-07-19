@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/snowztech/barecms/discussions
     about: "Ask questions and discuss BareCMS with the community"
   - name: "📚 Documentation"
-    url: https://github.com/snowztech/barecms/blob/main/docs/API.md
-    about: "Check the API documentation and guides"
+    url: https://github.com/snowztech/barecms/blob/main/README.md
+    about: "Check documentation and guides"

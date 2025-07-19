@@ -10,9 +10,14 @@
 <img src="https://img.shields.io/github/forks/snowztech/barecms" alt="Forks">
 <img src="https://img.shields.io/github/stars/snowztech/barecms" alt="Stars">
 <img src="https://img.shields.io/github/issues/snowztech/barecms" alt="Issues">
+<img src="https://img.shields.io/docker/pulls/ghcr.io/snowztech/barecms" alt="Docker Pulls">
 <img src="https://img.shields.io/github/repo-size/snowztech/barecms" alt="Repository Size">
 <a href="LICENSE">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
+</a>
+
+<a href="https://github.com/sponsors/lucasnevespereira">
+  <img src="https://img.shields.io/badge/Sponsor-❤️-ea4aaa" alt="Sponsor">
 </a>
 
 </div>
@@ -34,7 +39,7 @@
 - [🗺️ Roadmap](#️-roadmap)
 - [💬 Community](#-community)
 - [📄 License](#-license)
-- [🙏 Acknowledgments](#-acknowledgments)
+- [💖 Support](#-support)
 
 ---
 
@@ -307,25 +312,20 @@ _Keep it simple. [Suggest features](https://github.com/snowztech/barecms/issues)
 - **🐛 Report Issues**: [GitHub Issues](https://github.com/snowztech/barecms/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/snowztech/barecms/discussions)
 - **🚀 Want to see a feature?**: [Open a issue](https://github.com/snowztech/barecms/issues)
+- **💖 Support Development**: [GitHub Sponsors](https://github.com/sponsors/lucasnevespereira)
 
 ## License
 
 MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 💖 Support
 
-Thanks to all [contributors](https://github.com/snowztech/barecms/graphs/contributors) who have helped build BareCMS
-
-Inspired by the need for a truly minimal, yet powerful CMS solution
-
-Built with ❤️ by the [SnowzTech](https://github.com/snowztech) team
-
----
+BareCMS is free and open source, inspired by the need for a truly minimal yet powerful CMS solution.
 
 <div align="center">
 
-**[⭐ Star us on GitHub](https://github.com/snowztech/barecms) — it helps!**
+If BareCMS helps you build something awesome, [⭐ star the repo](https://github.com/snowztech/barecms) or [❤️ sponsor the project](https://github.com/sponsors/lucasnevespereira)
 
-Made with ❤️ by [SnowzTech](https://github.com/snowztech)
+<sub>Built with care by [SnowzTech](https://github.com/snowztech) • Keep it simple</sub>
 
 </div>
