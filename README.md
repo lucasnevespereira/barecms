@@ -56,7 +56,7 @@ This command will:
 - Create and start both the PostgreSQL database and the BareCMS application containers.
 - Mount a persistent volume for the PostgreSQL data, ensuring your data is saved even if the containers are removed.
 
-  **Access BareCMS:**
+**Access BareCMS:**
   Open your web browser and navigate to [localhost:8080](http://localhost:8080).
 
 ### Development Commands
