@@ -3,15 +3,33 @@ name: release
 on:
   push:
     tags:
-      - "v[0-9]+.[0-9]+.[0-9]+" # Trigger on tags like v1.0.0, v1.2.3
-      - "v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+" # Also trigger on beta tags like v1.0.0-beta.1
+      - "v[0-9]+.[0-9]+.[0-9]+" # Trigger on semantic version tags (e.g., v1.0.0)
+      - "v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+" # Trigger on beta tags (e.g., v1.0.0-beta.1)
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to create release for (e.g., v1.0.0 or v1.0.0-beta.1)"
+        required: true
+        type: string
+      prerelease:
+        description: "Is this a pre-release?"
+        required: false
+        default: false
+        type: boolean
+      generate_notes:
+        description: "Automatically generate release notes?"
+        required: false
+        default: true
+        type: boolean
+
+env:
+  IMAGE_NAME: barecms
+  RELEASE_VERSION: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
-  build-and-release:
+  build-binaries:
+    name: build and package binaries
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,38 +37,112 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.4"
+          go-version: "1.24.4" # Ensure this matches your project's Go version
 
-      - name: Build UI
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18" # Ensure this matches your project's Node.js version
+
+      - name: Install UI dependencies and build
         run: |
           cd ui
           npm install
           npm run build
+          cd .. # Go back to root directory
 
-      - name: Build BareCMS (Linux AMD64)
+      - name: Build and Package Linux AMD64
         run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o barecms-linux-amd64 ./cmd/main.go
+          mkdir -p barecms-linux-amd64
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o barecms-linux-amd64/barecms ./cmd/main.go
+          cp -r ui/dist barecms-linux-amd64/
+          tar -czf barecms-linux-amd64.tar.gz barecms-linux-amd64
 
-      - name: Build BareCMS (Windows AMD64)
+      - name: Build and Package Windows AMD64
         run: |
-          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o barecms-windows-amd64.exe ./cmd/main.go
+          mkdir -p barecms-windows-amd64
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o barecms-windows-amd64/barecms.exe ./cmd/main.go
+          cp -r ui/dist barecms-windows-amd64/
+          zip -r barecms-windows-amd64.zip barecms-windows-amd64
 
-      - name: Build BareCMS (macOS AMD64)
+      - name: Build and Package macOS AMD64
         run: |
-          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o barecms-macos-amd64 ./cmd/main.go
+          mkdir -p barecms-macos-amd64
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o barecms-macos-amd64/barecms ./cmd/main.go
+          cp -r ui/dist barecms-macos-amd64/
+          tar -czf barecms-macos-amd64.tar.gz barecms-macos-amd64
+
+      - name: Upload packaged binaries as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: barecms-binaries
+          path: |
+            barecms-linux-amd64.tar.gz
+            barecms-windows-amd64.zip
+            barecms-macos-amd64.tar.gz
+
+  build-and-push-docker:
+    name: build and push docker image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=semver,pattern={{version}} # e.g., v1.0.0
+            type=semver,pattern={{major}}.{{minor}} # e.g., v1.0
+            type=raw,value=latest,enable=${{ github.ref == format('refs/tags/{0}', env.RELEASE_VERSION) && !contains(env.RELEASE_VERSION, '-beta') }} # Only tag 'latest' for non-beta releases
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  create-github-release:
+    name: create github release
+    runs-on: ubuntu-latest
+    needs: [build-binaries, build-and-push-docker]
+    permissions:
+      contents: write
+    steps:
+      - name: Download all packaged binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: barecms-binaries
+          path: ./release_artifacts # Download to this directory
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically provides this token
-          # tag: ${{ github.ref_name }} # The tag name that triggered the workflow (e.g., v1.0.0)
-          # name: Release ${{ github.ref_name }} # The title of the release
-          # body: Automatically generated release notes based on commits since last tag.
-          # Generate release notes automatically from commits
-          generate_release_notes: true
-          # Mark as pre-release if tag contains "-beta"
-          prerelease: ${{ contains(github.ref_name, '-beta') }}
-          # Upload the built binaries as release assets
-          artifacts: "barecms-linux-amd64,barecms-windows-amd64.exe,barecms-macos-amd64"
-          # Optional: Exclude certain commit types from release notes if using generate_release_notes
-          # changelog_exclude: "chore,docs,style"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ env.RELEASE_VERSION }}
+          name: Release ${{ env.RELEASE_VERSION }}
+          # Use the generate_release_notes input from workflow_dispatch if available, otherwise default to true
+          generate_release_notes: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.generate_notes || github.event_name == 'push' }}
+          # Use the prerelease input from workflow_dispatch if available, otherwise infer from tag name
+          prerelease: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.prerelease || contains(env.RELEASE_VERSION, '-beta') }}
+          # Upload all packaged binaries as release assets
+          artifacts: "./release_artifacts/*"
