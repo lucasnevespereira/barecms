@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import apiClient from "@/lib/api";
 
 const useDeleteUser = (userId: string) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -9,9 +9,9 @@ const useDeleteUser = (userId: string) => {
       setIsDeleting(true);
       setError(null);
       try {
-        const res = await axios.delete(`/api/auth/user/${userId}`);
+        const res = await apiClient.delete(`/auth/user/${userId}`);
         if (res.status === 200) {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
           window.location.href = "/login";
         } else {
           setError("Failed to delete resource");

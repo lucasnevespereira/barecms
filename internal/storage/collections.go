@@ -36,11 +36,29 @@ func (s *Storage) GetCollectionsBySiteID(siteID string) ([]CollectionDB, error) 
 }
 
 func (s *Storage) DeleteCollection(id string) error {
-	deleted := s.DB.Where("id = ?", id).Delete(&CollectionDB{})
-	if deleted.Error != nil {
-		return deleted.Error
+	tx := s.DB.Begin()
+	if tx.Error != nil {
+		return tx.Error
 	}
-	return nil
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// delete all entries for this collection
+	if err := tx.Where("collection_id = ?", id).Delete(&EntryDB{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// delete the collection
+	if err := tx.Where("id = ?", id).Delete(&CollectionDB{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
 func (s *Storage) DeleteCollectionsBySiteID(siteId string) error {

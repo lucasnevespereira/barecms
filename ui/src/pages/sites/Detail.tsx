@@ -1,31 +1,61 @@
 import React, { useRef } from "react";
 import { useParams } from "react-router-dom";
 import CreateCollectionModal from "@/components/modals/CreateCollectionModal";
-import { useGetSite } from "@/hooks/useGetSite";
-import { useGetCollections } from "@/hooks/useGetCollections";
+import { useSiteDetail } from "@/hooks/useSiteDetail";
 import Loader from "@/components/Loader";
 import useDelete from "@/hooks/useDelete";
 import ViewSiteDataModal from "@/components/modals/ViewSiteDataModal";
 
 const SiteDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { site, loading } = useGetSite(`/api/sites/${id}`);
-  const { collections } = useGetCollections(
-    `/api/sites/${site?.id}/collections`
-  );
-  const { isDeleting, handleDelete } = useDelete(`/api/sites/${id}`, "/");
+  const { site, collections, loading, error } = useSiteDetail(id);
+  const { isDeleting, handleDelete } = useDelete(`/sites/${id || ""}`, "/");
+
   const collectionModalRef = useRef<HTMLDialogElement>(null);
   const viewDataModalRef = useRef<HTMLDialogElement>(null);
+
   const openCollectionModal = () => {
     if (collectionModalRef.current) {
       collectionModalRef.current.showModal();
     }
   };
+
   const openDataModal = () => {
     if (viewDataModalRef.current) {
       viewDataModalRef.current.showModal();
     }
   };
+
+  if (loading) {
+    return (
+      <main className="py-10 min-h-[600px] flex items-center justify-center">
+        <Loader size="lg" />
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="py-10 min-h-[600px]">
+        <div className="alert alert-error">{error}</div>
+        <a href="/" className="btn btn-primary mt-4">
+          Back to Sites
+        </a>
+      </main>
+    );
+  }
+
+  if (!site) {
+    return (
+      <main className="py-10 min-h-[600px]">
+        <div className="alert alert-warning">Site not found</div>
+        <a href="/" className="btn btn-primary mt-4">
+          Back to Sites
+        </a>
+      </main>
+    );
+  }
+
   return (
     <main className="py-10 min-h-[600px]">
       <div className="w-full flex justify-between items-center">
@@ -35,7 +65,7 @@ const SiteDetailsPage: React.FC = () => {
               <a href="/">My Sites</a>
             </li>
             <li>
-              <a href={`/sites/${id}`}>{site?.name}</a>
+              <a href={`/sites/${id}`}>{site.name}</a>
             </li>
           </ul>
         </div>
@@ -52,60 +82,58 @@ const SiteDetailsPage: React.FC = () => {
               className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 w-40 shadow"
             >
               <li className="text-sm">
-                <span onClick={handleDelete}>Delete Site</span>
+                <span onClick={handleDelete}>
+                  {isDeleting ? "Deleting..." : "Delete Site"}
+                </span>
               </li>
             </ul>
           </div>
         </div>
       </div>
-      {loading || (isDeleting && <Loader size="lg" />)}
-      {site ? (
-        <div className="w-full">
-          <h2 className="text-2xl font-semibold mb-2">{site.name}</h2>
-          <p className="text-gray-600 mb-4">Id: {site.id}</p>
-          <p className="text-gray-600 mb-4">Slug: {site.slug}</p>
-          <hr />
-          <div className="collections-container flex flex-col gap-5">
-            <div className="w-full flex justify-between items-center mt-6">
-              <h3 className="text-xl font-semibold">Collections</h3>
-              <button className="btn" onClick={openCollectionModal}>
-                + New Collection
-              </button>
-            </div>
-            {collections && collections.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                {collections.map((collection) => (
-                  <div
-                    key={collection.id}
-                    className="card w-full mx-auto border border-gray-200 p-5 mt-3 rounded cursor-pointer"
-                  >
-                    <h3 className="card-title font-bold">{collection.name}</h3>
-                    <p className="text-sm">{collection.slug}</p>
-                    <a
-                      className="link flex justify-end"
-                      href={`/sites/${site.id}/collections/${collection.id}`}
-                    >
-                      view
-                    </a>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="mt-3">No collections found</p>
-            )}
-            <CreateCollectionModal
-              dialogRef={collectionModalRef}
-              siteId={site.id}
-            />
+
+      <div className="w-full">
+        <h2 className="text-2xl font-semibold mb-2">{site.name}</h2>
+        <p className="text-gray-600 mb-4">Id: {site.id}</p>
+        <p className="text-gray-600 mb-4">Slug: {site.slug}</p>
+        <hr />
+
+        <div className="collections-container flex flex-col gap-5">
+          <div className="w-full flex justify-between items-center mt-6">
+            <h3 className="text-xl font-semibold">Collections</h3>
+            <button className="btn" onClick={openCollectionModal}>
+              + New Collection
+            </button>
           </div>
-          <ViewSiteDataModal
-            dialogRef={viewDataModalRef}
-            siteSlug={site.slug}
-          />
+
+          {collections.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              {collections.map((collection) => (
+                <div
+                  key={collection.id}
+                  className="card w-full mx-auto border border-gray-200 p-5 mt-3 rounded cursor-pointer"
+                >
+                  <h3 className="card-title font-bold">{collection.name}</h3>
+                  <p className="text-sm">{collection.slug}</p>
+                  <a
+                    className="link flex justify-end"
+                    href={`/sites/${site.id}/collections/${collection.id}`}
+                  >
+                    view
+                  </a>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3">No collections found</p>
+          )}
         </div>
-      ) : (
-        <Loader size="lg" />
-      )}
+
+        <CreateCollectionModal
+          dialogRef={collectionModalRef}
+          siteId={site.id}
+        />
+        <ViewSiteDataModal dialogRef={viewDataModalRef} siteSlug={site.slug} />
+      </div>
     </main>
   );
 };

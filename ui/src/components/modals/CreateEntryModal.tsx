@@ -1,5 +1,6 @@
 import { Field } from "@/types";
 import { useEffect, useState } from "react";
+import { useApi } from "@/hooks/useApi";
 
 interface CreateEntryModalProps {
   collectionId: string;
@@ -12,14 +13,16 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({
   fields,
   dialogRef,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
+  const { request, loading } = useApi();
+
   const closeDialog = () => {
     if (dialogRef.current) {
       dialogRef.current.close();
     }
   };
+
   useEffect(() => {
     // Initialize form state with empty values for each field
     const initialFormState: Record<string, any> = {};
@@ -30,60 +33,54 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({
   }, [fields]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const onAddEntry = async (
-    collectionId: string,
-    fields: Field[],
-    entry: Record<string, any>
-  ) => {
-    console.log("Creating entry", entry, collectionId);
-    // Prepare data with types
-    const dataWithTypes = fields.reduce(
-      (acc, field) => {
-        acc[field.name] = {
-          value: entry[field.name],
-          type: field.type,
-        };
-        return acc;
-      },
-      {} as Record<string, { value: any; type: string }>
-    );
-    const payload = JSON.stringify({ collectionId, data: dataWithTypes });
-    return await fetch(`/api/entries`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: payload,
-    });
-  };
   const handleSubmit = async () => {
+    console.log("fields", fields);
+
     const hasEmptyFields = fields.some(
-      (field) => formState[field.name].trim() === ""
+      (field) => formState[field.name].trim() === "",
     );
+
+    console.log("hasEmptyFields", hasEmptyFields);
 
     if (hasEmptyFields) {
       setError("All fields are required.");
       return;
     }
-    setLoading(true);
+
     setError(null);
     try {
-      await onAddEntry(collectionId, fields, formState);
+      // Prepare data with types
+      const dataWithTypes = fields.reduce(
+        (acc, field) => {
+          acc[field.name] = {
+            value: formState[field.name],
+            type: field.type,
+          };
+          return acc;
+        },
+        {} as Record<string, { value: any; type: string }>,
+      );
+
+      await request({
+        url: "/entries",
+        method: "POST",
+        data: { collectionId, data: dataWithTypes },
+      });
+
+      console.log("Entry created successfully");
       closeDialog();
       setTimeout(() => {
         window.location.reload();
       }, 300);
     } catch (e: any) {
       console.error(e);
-      setError("Failed to create entry. Please try again.");
-    } finally {
-      setLoading(false);
+      setError(e.message || "Failed to create entry. Please try again.");
     }
   };
 

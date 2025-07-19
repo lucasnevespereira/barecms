@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useApi } from "@/hooks/useApi";
 
 interface Field {
   name: string;
@@ -10,16 +11,21 @@ interface CreateCollectionModalProps {
   dialogRef: React.RefObject<HTMLDialogElement>;
 }
 
-const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, dialogRef }) => {
+const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
+  siteId,
+  dialogRef,
+}) => {
   const [collectionName, setCollectionName] = useState("");
   const [fields, setFields] = useState<Field[]>([]);
   const [newFieldName, setNewFieldName] = useState("");
   const [newFieldType, setNewFieldType] = useState("string");
   const [error, setError] = useState<string | null>(null);
   const [fieldsError, setFieldsError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const { request, loading } = useApi();
 
-  const handleCollectionNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCollectionNameChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     setCollectionName(e.target.value);
     setError(null);
   };
@@ -28,7 +34,9 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
     setNewFieldName(e.target.value);
   };
 
-  const handleNewFieldTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleNewFieldTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setNewFieldType(e.target.value);
   };
 
@@ -38,12 +46,20 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
       return;
     }
 
-    if (fields.find((field) => field.name === newFieldName.trim().toLowerCase())) {
+    if (
+      fields.find((field) => field.name === newFieldName.trim().toLowerCase())
+    ) {
       setFieldsError("Field name must be unique.");
       return;
     }
 
-    setFields([...fields, { name: newFieldName.trim().toLowerCase(), type: newFieldType.trim().toLowerCase() }]);
+    setFields([
+      ...fields,
+      {
+        name: newFieldName.trim().toLowerCase(),
+        type: newFieldType.trim().toLowerCase(),
+      },
+    ]);
     setNewFieldName("");
     setNewFieldType("string");
   };
@@ -58,18 +74,6 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
     }
   };
 
-  const onAddCollection = async (name: string, fields: Field[]) => {
-    console.log("Creating collection", name, fields, siteId);
-    const payload = JSON.stringify({ name, fields, siteId });
-    return await fetch(`/api/collections`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: payload,
-    });
-  }
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (collectionName.trim() === "") {
@@ -81,15 +85,21 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
       setFieldsError("You must add at least one field to the collection.");
       return;
     }
-    setLoading(true);
+
     setError(null);
     setFieldsError(null);
     try {
-      const response = await onAddCollection(collectionName, fields);
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message);
-      }
+      await request({
+        url: "/collections",
+        method: "POST",
+        data: {
+          name: collectionName,
+          fields,
+          siteId,
+        },
+      });
+
+      console.log("Collection created successfully");
       closeDialog();
       setTimeout(() => {
         window.location.reload();
@@ -98,7 +108,6 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
       console.error(e);
       setError(e.message || "Failed to create collection. Please try again.");
     } finally {
-      setLoading(false);
       setCollectionName("");
       setFields([]);
     }
@@ -120,8 +129,15 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
           <h4 className="font-semibold mb-2">Fields</h4>
           {fields.map((field, index) => (
             <div key={index} className="flex items-center mb-2">
-              <p className="mr-2">{field.name} ({field.type})</p>
-              <button className="btn btn-sm btn-error btn-outline" onClick={() => removeField(index)}>Remove</button>
+              <p className="mr-2">
+                {field.name} ({field.type})
+              </p>
+              <button
+                className="btn btn-sm btn-error btn-outline"
+                onClick={() => removeField(index)}
+              >
+                Remove
+              </button>
             </div>
           ))}
           <div className="flex mb-2">
@@ -132,7 +148,11 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
               value={newFieldName}
               onChange={handleNewFieldNameChange}
             />
-            <select className="select select-bordered" value={newFieldType} onChange={handleNewFieldTypeChange}>
+            <select
+              className="select select-bordered"
+              value={newFieldType}
+              onChange={handleNewFieldTypeChange}
+            >
               <option value="string">String</option>
               <option value="number">Number</option>
               <option value="boolean">Boolean</option>
@@ -140,15 +160,23 @@ const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({ siteId, d
               <option value="image">Image</option>
               <option value="url">URL</option>
             </select>
-            <button className="btn btn-primary ml-2" onClick={addField}>Add Field</button>
+            <button className="btn btn-primary ml-2" onClick={addField}>
+              Add Field
+            </button>
           </div>
         </div>
         {fieldsError && <p className="text-red-500 mt-2">{fieldsError}</p>}
         <div className="modal-action">
-          <button disabled={loading} onClick={handleSubmit} className="btn btn-primary">
+          <button
+            disabled={loading}
+            onClick={handleSubmit}
+            className="btn btn-primary"
+          >
             {loading ? "Creating..." : "Create"}
           </button>
-          <button className="btn" onClick={closeDialog}>Cancel</button>
+          <button className="btn" onClick={closeDialog}>
+            Cancel
+          </button>
         </div>
       </div>
     </dialog>

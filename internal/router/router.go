@@ -52,6 +52,7 @@ func Setup(service *services.Service, config configs.AppConfig) *gin.Engine {
 			// Sites routes
 			protected.GET("/sites", h.GetSites)
 			protected.GET("/sites/:id", h.GetSite)
+			protected.GET("/sites/:id/with-collections", h.GetSiteWithCollections)
 			protected.POST("/sites", h.CreateSite)
 			protected.DELETE("/sites/:id", h.DeleteSite)
 			protected.GET("/sites/:id/collections", h.GetSiteCollections)
