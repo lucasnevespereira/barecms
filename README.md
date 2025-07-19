@@ -1,22 +1,21 @@
-# BareCMS
-
 <div align="center">
 
-![BareCMS Logo](assets/logo.svg)
+<img src="assets/logo.svg" alt="Workout.cool Logo" width="120" height="120">
 
-**A lightweight, open-source headless CMS designed with bare minimalism in mind**
+<h1>BareCMS</h1>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Docker Pulls](https://img.shields.io/docker/pulls/ghcr.io/snowztech/barecms)](https://github.com/snowztech/barecms/pkgs/container/barecms)
-[![Go Report Card](https://goreportcard.com/badge/github.com/snowztech/barecms)](https://goreportcard.com/report/github.com/snowztech/barecms)
-[![GitHub release](https://img.shields.io/github/release/snowztech/barecms.svg)](https://github.com/snowztech/barecms/releases)
-[![GitHub stars](https://img.shields.io/github/stars/snowztech/barecms.svg?style=social)](https://github.com/snowztech/barecms/stargazers)
+<h3><em>A lightweight, open-source headless CMS designed with bare minimalism in mind</em></h3>
 
-[🚀 Quick Start](#-quick-start) • [📖 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [💬 Community](#-community)
+<img src="https://img.shields.io/github/contributors/snowztech/barecms?style=plastic" alt="Contributors">
+<img src="https://img.shields.io/github/forks/snowztech/barecms" alt="Forks">
+<img src="https://img.shields.io/github/stars/snowztech/barecms" alt="Stars">
+<img src="https://img.shields.io/github/issues/snowztech/barecms" alt="Issues">
+<img src="https://img.shields.io/github/repo-size/snowztech/barecms" alt="Repository Size">
+<a href="LICENSE">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
+</a>
 
 </div>
-
----
 
 ## 📋 Table of Contents
 
@@ -104,26 +103,26 @@ _See BareCMS in action - create sites, manage collections, and publish content w
 
 2. **Set up environment variables**
 
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+cp .env.example .env
+```
 
-   Edit `.env` and update the `JWT_SECRET` with a strong, random string:
+Edit `.env` and update the `JWT_SECRET` with a strong, random string:
 
-   ```bash
-   # Generate a secure JWT secret
-   openssl rand -base64 32
-   ```
+```bash
+# Generate a secure JWT secret
+openssl rand -base64 32
+```
 
 3. **Start the application**
 
-   ```bash
-   make up
-   ```
+```bash
+  make up
+```
 
 4. **Access BareCMS**
 
-   Open your browser and navigate to [http://localhost:8080](http://localhost:8080)
+Open your browser and navigate to [http://localhost:8080](http://localhost:8080)
 
 ### Development Commands
 
@@ -250,45 +249,47 @@ docker run -d --name barecms-app \
 
 ## 🧪 API Reference
 
-BareCMS provides a RESTful API for content management and public data access.
-
 ### 🌐 Public Data Access
 
-- `GET /:siteSlug/data` - **Get all site data publicly** (collections and entries)
+**`GET /:siteSlug/data`** - Get all site data publicly (no authentication required)
 
-_This is the key endpoint for headless usage - create your site with collections and entries, then query all data publicly using your site slug._
+**Example:** `GET /my-blog/data`
 
-### Authentication
+**Response:**
 
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
+```json
+{
+  "site": {
+    "id": 1,
+    "name": "My Blog",
+    "slug": "my-blog",
+    "description": "A simple blog site"
+  },
+  "collections": [
+    {
+      "id": 1,
+      "name": "Posts",
+      "slug": "posts",
+      "description": "Blog posts collection",
+      "entries": [
+        {
+          "id": 1,
+          "title": "Welcome to BareCMS",
+          "content": "This is my first blog post...",
+          "slug": "welcome-to-barecms",
+          "created_at": "2024-01-15T10:30:00Z"
+        }
+      ]
+    }
+  ]
+}
+```
 
-### Content Management (Authenticated)
+_This is the core of headless usage: manage content through the admin interface, then access all site data publicly via this single endpoint._
 
-**Sites**
+### 📚 Complete API Documentation
 
-- `GET /api/sites` - List all sites
-- `POST /api/sites` - Create a new site
-- `GET /api/sites/:id` - Get site details
-- `PUT /api/sites/:id` - Update site
-- `DELETE /api/sites/:id` - Delete site
-
-**Collections**
-
-- `GET /api/sites/:siteId/collections` - List collections
-- `POST /api/sites/:siteId/collections` - Create collection
-- `GET /api/collections/:id` - Get collection details
-- `PUT /api/collections/:id` - Update collection
-- `DELETE /api/collections/:id` - Delete collection
-
-**Entries**
-
-- `GET /api/collections/:collectionId/entries` - List entries
-- `POST /api/collections/:collectionId/entries` - Create entry
-- `GET /api/entries/:id` - Get entry details
-- `PUT /api/entries/:id` - Update entry
-- `DELETE /api/entries/:id` - Delete entry
+For detailed documentation of all authentication and content management endpoints, see **[API.md](docs/API.md)**.
 
 ---
 
