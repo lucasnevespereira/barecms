@@ -10,14 +10,13 @@
 <img src="https://img.shields.io/github/forks/snowztech/barecms" alt="Forks">
 <img src="https://img.shields.io/github/stars/snowztech/barecms" alt="Stars">
 <img src="https://img.shields.io/github/issues/snowztech/barecms" alt="Issues">
-<img src="https://img.shields.io/docker/pulls/ghcr.io/snowztech/barecms" alt="Docker Pulls">
 <img src="https://img.shields.io/github/repo-size/snowztech/barecms" alt="Repository Size">
 <a href="LICENSE">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
 </a>
 
 <a href="https://github.com/sponsors/lucasnevespereira">
-  <img src="https://img.shields.io/badge/Sponsor-❤️-ea4aaa" alt="Sponsor">
+  <img src="https://img.shields.io/badge/Sponsor-GitHub-333333?style=flat&logo=github&logoColor=white" alt="Sponsor">
 </a>
 
 </div>
@@ -312,7 +311,6 @@ _Keep it simple. [Suggest features](https://github.com/snowztech/barecms/issues)
 - **🐛 Report Issues**: [GitHub Issues](https://github.com/snowztech/barecms/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/snowztech/barecms/discussions)
 - **🚀 Want to see a feature?**: [Open a issue](https://github.com/snowztech/barecms/issues)
-- **💖 Support Development**: [GitHub Sponsors](https://github.com/sponsors/lucasnevespereira)
 
 ## License
 
@@ -324,7 +322,7 @@ BareCMS is free and open source, inspired by the need for a truly minimal yet po
 
 <div align="center">
 
-If BareCMS helps you build something awesome, [⭐ star the repo](https://github.com/snowztech/barecms) or [❤️ sponsor the project](https://github.com/sponsors/lucasnevespereira)
+If BareCMS helps you build something awesome, [⭐ star the repo](https://github.com/snowztech/barecms) or [❤️ support the project](https://github.com/sponsors/lucasnevespereira)
 
 <sub>Built with care by [SnowzTech](https://github.com/snowztech) • Keep it simple</sub>
 
