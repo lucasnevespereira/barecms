@@ -12,7 +12,7 @@ The general workflow for contributing involves forking the repository, making yo
 
 First, you'll need to create your own copy of the BareCMS repository:
 
-- Go to the [BareCMS GitHub repository](https://github.com/lucasnevespereira/barecms).
+- Go to the [BareCMS GitHub repository](https://github.com/snowztech/barecms).
 
 - Click the "Fork" button in the top right corner. This will create a copy of the repository under your GitHub account.
 
@@ -26,15 +26,17 @@ cd barecms
 ```
 
 **3. Set Up the Upstream Remote**
+
 To keep your local repository synchronized with the original BareCMS repository (the "upstream"), you need to add it as a remote:
 
 ```bash
-git remote add upstream https://github.com/lucasnevespereira/barecms.git
+git remote add upstream https://github.com/snowztech/barecms.git
 git remote -v
 # You should see 'origin' pointing to your fork and 'upstream' pointing to the main BareCMS repo.
 ```
 
-**4.Create a New Branch**
+**4. Create a New Branch**
+
 It's crucial to work on a new branch for each feature or bug fix. This keeps your changes isolated and makes merging easier. Choose a descriptive name for your branch (e.g., `feature/add-auth-middleware`, `fix/login-bug`).
 
 ```
@@ -44,12 +46,14 @@ git checkout -b feature/your-feature-name
 ```
 
 **5. Make Your Changes**
+
 Implement your feature or fix the bug. Remember to:
 
 - Follow existing code style.
 - Update documentation if your changes affect how the project is used or configured.
 
 **Rebase with Upstream (Keeping Your Branch Up-to-Date)**
+
 Before committing and pushing, it's a good practice to rebase your branch with the latest changes from the upstream/main branch. This keeps your commit history clean and avoids unnecessary merge commits.
 
 ```bash
@@ -62,6 +66,7 @@ git rebase upstream/main
 - **Force Push (if you've already pushed):** If you've already pushed your branch to your fork before rebasing, you'll need to force push after rebasing: `git push --force-with-lease origin feature/your-feature-name`. Be cautious with `git push --force` as it can overwrite history. `git push --force-with-lease` is safer.
 
 **7. Commit Your Changes**
+
 Once your changes are complete and rebased, commit them with a clear and concise commit message.
 
 ```bash
@@ -72,6 +77,7 @@ git commit -m "feat: Add a concise description of your feature or fix"
 - **Commit Message Guidelines:** Aim for clear, descriptive, and atomic commits. A good commit message explains what was changed and why. Consider using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (e.g., `feat:`, `fix:`, `docs:`, `chore:`) for consistency.
 
 **8. Push to your Fork**
+
 Push your new branch with your committed changes to your forked repository on GitHub:
 
 ```bash
