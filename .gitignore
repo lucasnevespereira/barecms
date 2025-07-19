@@ -6,3 +6,6 @@
 #storage
 .DS_Store
 barecms.db
+
+#environment
+.env

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -12,17 +12,16 @@ type Storage struct {
 	DB *gorm.DB
 }
 
-func NewStorage() (*Storage, error) {
-	database, err := openDatabase()
+func NewStorage(databaseURL string) (*Storage, error) {
+	database, err := openDatabase(databaseURL)
 	if err != nil {
 		return nil, err
 	}
 	return &Storage{DB: database}, nil
 }
 
-func openDatabase() (*gorm.DB, error) {
-	var err error
-	database, err := gorm.Open(sqlite.Open("barecms.db"), &gorm.Config{})
+func openDatabase(url string) (*gorm.DB, error) {
+	database, err := gorm.Open(postgres.Open(url), &gorm.Config{})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to database")
 	}

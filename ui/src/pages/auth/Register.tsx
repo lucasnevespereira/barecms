@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import Loader from '@/components/Loader';
-import { Eye, EyeOff } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/Loader";
+import { Eye, EyeOff } from "lucide-react";
 
 const Register: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { loading, error, register } = useAuth();
   const navigate = useNavigate();
@@ -19,9 +19,17 @@ const Register: React.FC = () => {
       alert("Passwords do not match");
       return;
     }
+
     const response = await register(email, username, password);
+
     if (!response.error) {
-      navigate('/login');
+      // If we got a token, redirect to dashboard
+      if (response.token) {
+        window.location.href = "/";
+      } else {
+        // Otherwise redirect to login
+        navigate("/login");
+      }
     }
   };
 
@@ -62,7 +70,7 @@ const Register: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input input-bordered w-full pr-10"
@@ -83,7 +91,7 @@ const Register: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={'password'}
+                  type={"password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="input input-bordered w-full pr-10"
@@ -92,12 +100,18 @@ const Register: React.FC = () => {
               </div>
             </div>
             <div className="form-control mt-6">
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? <Loader size="sm" /> : 'Register'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? <Loader size="sm" /> : "Register"}
               </button>
             </div>
           </form>
-          <a href="/login" className="link mt-4"><small>Already have an account? Login</small></a>
+          <a href="/login" className="link mt-4">
+            <small>Already have an account? Login</small>
+          </a>
         </div>
       </div>
     </div>

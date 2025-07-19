@@ -4,6 +4,7 @@ import axios from 'axios';
 interface AuthResponse {
   token?: string;
   error?: string;
+  user?: any;
 }
 
 export const useAuth = () => {
@@ -15,14 +16,14 @@ export const useAuth = () => {
     setError(null);
     try {
       const response = await axios.post('/api/auth/login', { email, password });
-      const { token } = response.data;
+      const { token, user } = response.data;
       localStorage.setItem('token', token);
       setLoading(false);
-      return { token };
-    } catch (err: any) {
+      return { token, user };
+    } catch (error: any) {
       setLoading(false);
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
-      return { error: err.response?.data?.error || 'An error occurred. Please try again.' };
+      setError(error.response?.data?.error || 'An error occurred. Please try again.');
+      return { error: error.response?.data?.error || 'An error occurred. Please try again.' };
     }
   };
 
@@ -31,10 +32,15 @@ export const useAuth = () => {
     setError(null);
     try {
       const response = await axios.post('/api/auth/register', { email, username, password });
-      const { token } = response.data;
-      localStorage.setItem('token', token);
       setLoading(false);
-      return { token };
+
+      const { token, user } = response.data;
+      if (token) {
+        localStorage.setItem('token', token);
+        return { token, user };
+      }
+
+      return { user };
     } catch (err: any) {
       setLoading(false);
       setError(err.response?.data?.error || 'An error occurred. Please try again.');
@@ -47,11 +53,17 @@ export const useAuth = () => {
     window.location.href = '/login';
   };
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   return {
     loading,
     error,
     login,
     register,
     logout,
+    getAuthHeaders
   };
 };

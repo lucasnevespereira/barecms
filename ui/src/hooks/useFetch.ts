@@ -12,7 +12,12 @@ export function useFetch<T = unknown>(url: string) {
       setLoading(true);
       try {
         console.log("Fetching data from: ", url);
-        const response: AxiosResponse<T> = await axios.get(url);
+
+        // Get auth token
+        const token = localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+        const response: AxiosResponse<T> = await axios.get(url, { headers });
         if (isMounted) {
           setData(response.data);
         }
