@@ -21,7 +21,6 @@
 
 - [🎬 Demo](#-demo)
 - [✨ Features](#-features)
-- [🛠️ Tech Stack](#️-tech-stack)
 - [🚀 Quick Start](#-quick-start)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -56,26 +55,6 @@ _See BareCMS in action - create sites, manage collections, and publish content w
 - **🔐 Secure Authentication**: JWT-based authentication system
 - **🗃️ Flexible Content Management**: Support for sites, collections, and entries
 - **🚀 Production Ready**: Built with scalability and reliability in mind
-
-## Tech Stack
-
-### Backend
-
-- **[Go](https://golang.org/)** - High-performance backend language
-- **[Gin](https://gin-gonic.com/)** - Fast HTTP web framework
-- **[PostgreSQL](https://postgresql.org/)** - Reliable relational database
-
-### Frontend
-
-- **[React](https://reactjs.org/)** - Modern UI library
-- **[TypeScript](https://typescriptlang.org/)** - Type-safe JavaScript
-- **[TailwindCSS](https://tailwindcss.com/)** - Utility-first CSS framework
-- **[Vite](https://vitejs.dev/)** - Fast build tool
-
-### DevOps
-
-- **[Docker](https://docker.com/)** - Containerization
-- **[Docker Compose](https://docs.docker.com/compose/)** - Multi-container orchestration
 
 ## 🚀 Quick Start
 
@@ -244,8 +223,8 @@ docker run -d --name barecms-app \
 ## 📖 Documentation
 
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - How to contribute to BareCMS
-
----
+- **[API Documentation](docs/API.md)** - Complete API reference
+- **[Self Hosting Guide](docs/SELF_HOSTING.md)** - Complete Self Hosting Guide
 
 ## 🧪 API Reference
 
@@ -291,8 +270,6 @@ _This is the core of headless usage: manage content through the admin interface,
 
 For detailed documentation of all authentication and content management endpoints, see **[API.md](docs/API.md)**.
 
----
-
 ## 🤝 Contributing
 
 We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
@@ -315,25 +292,15 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 For detailed contributing guidelines, see [CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
----
-
 ## 🗺️ Roadmap
 
 ### 🔄 Current Focus
 
 - [ ] Enhanced documentation
-- [ ] Basic user roles and permissions
+- [ ] Improve auth flow
 - [ ] Content import/export
 
-### 🚀 Future Plans
-
-- [ ] Custom field types
-- [ ] Webhook support
-- [ ] Content versioning
-
 _Keep it simple. [Suggest features](https://github.com/snowztech/barecms/issues) that align with our minimal philosophy._
-
----
 
 ## 💬 Community
 
@@ -347,9 +314,11 @@ MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Thanks to all [contributors](https://github.com/snowztech/barecms/graphs/contributors) who have helped build BareCMS
-- Inspired by the need for a truly minimal, yet powerful CMS solution
-- Built with ❤️ by the [SnowzTech](https://github.com/snowztech) team
+Thanks to all [contributors](https://github.com/snowztech/barecms/graphs/contributors) who have helped build BareCMS
+
+Inspired by the need for a truly minimal, yet powerful CMS solution
+
+Built with ❤️ by the [SnowzTech](https://github.com/snowztech) team
 
 ---
 
