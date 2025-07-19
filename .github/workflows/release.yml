@@ -1,0 +1,56 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+" # Trigger on tags like v1.0.0, v1.2.3
+      - "v[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+" # Also trigger on beta tags like v1.0.0-beta.1
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.4"
+
+      - name: Build UI
+        run: |
+          cd ui
+          npm install
+          npm run build
+
+      - name: Build BareCMS (Linux AMD64)
+        run: |
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o barecms-linux-amd64 ./cmd/main.go
+
+      - name: Build BareCMS (Windows AMD64)
+        run: |
+          CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o barecms-windows-amd64.exe ./cmd/main.go
+
+      - name: Build BareCMS (macOS AMD64)
+        run: |
+          CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o barecms-macos-amd64 ./cmd/main.go
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically provides this token
+          # tag: ${{ github.ref_name }} # The tag name that triggered the workflow (e.g., v1.0.0)
+          # name: Release ${{ github.ref_name }} # The title of the release
+          # body: Automatically generated release notes based on commits since last tag.
+          # Generate release notes automatically from commits
+          generate_release_notes: true
+          # Mark as pre-release if tag contains "-beta"
+          prerelease: ${{ contains(github.ref_name, '-beta') }}
+          # Upload the built binaries as release assets
+          artifacts: "barecms-linux-amd64,barecms-windows-amd64.exe,barecms-macos-amd64"
+          # Optional: Exclude certain commit types from release notes if using generate_release_notes
+          # changelog_exclude: "chore,docs,style"
