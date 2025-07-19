@@ -14,6 +14,8 @@
 
 **Work in Progress**: The project is under active development and may not be complete.
 
+## Quick Start
+
 ### Prerequisites
 
 To run BareCMS quickly:
@@ -27,16 +29,14 @@ For local development:
 - **Node.js** (for frontend development)
 - **Golang** (for backend development)
 
-## Quick Start
-
-1. **Clone and setup**
+**Clone and setup**
 
 ```bash
   git clone https://github.com/lucasnevespereira/barecms.git
   cd barecms
 ```
 
-2. **Configure env**
+**Configure env**
 
 ```bash
   cp .env.example .env
@@ -44,7 +44,7 @@ For local development:
 
 Edit `.env` and change `JWT_SECRET` to a strong, random string
 
-3. **Start the application**
+**Start the application**
 
 ```bash
   make up
@@ -56,10 +56,10 @@ This command will:
 - Create and start both the PostgreSQL database and the BareCMS application containers.
 - Mount a persistent volume for the PostgreSQL data, ensuring your data is saved even if the containers are removed.
 
-4. **Access BareCMS:**
-   Open your web browser and navigate to [localhost:8080](http://localhost:8080).
+  **Access BareCMS:**
+  Open your web browser and navigate to [localhost:8080](http://localhost:8080).
 
-## Development Commands
+### Development Commands
 
 ```bash
 make up       # Start development environment
@@ -71,11 +71,7 @@ make help     # Show all commands
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for detailed instructions.
 
 ## License
 
