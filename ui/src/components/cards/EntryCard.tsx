@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import useDelete from "@/hooks/useDelete";
 import { Trash } from "lucide-react";
 import Loader from "@/components/Loader";

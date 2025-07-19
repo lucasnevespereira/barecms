@@ -16,7 +16,11 @@ func (s *Service) CreateEntry(request *models.CreateEntryRequest) error {
 		Data:         request.Data,
 	}
 	entryDB := mapToEntryDB(entry)
-	s.Storage.CreateEntry(entryDB)
+
+	if err := s.Storage.CreateEntry(entryDB); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -1,4 +1,4 @@
-name: CI BareCMS
+name: CI
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  ci:
-    name: Continuous Integration
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,26 +19,22 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.4" # Use your desired Go version
+          go-version: "1.24.4"
 
       - name: Go Mod Tidy
         run: go mod tidy
 
-      - name: Go Lint (go vet)
-        run: go vet ./...
-
-      - name: Install golangci-lint
-        run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.59.1
-
-      - name: Go Lint (golangci-lint)
-        run: $(go env GOPATH)/bin/golangci-lint run ./... --timeout 5m
+      - name: Go Lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v2.1
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "18"
 
-      - name: Install UI dependencies
+      - name: UI dependencies
         run: |
           cd ui
           npm install
@@ -47,6 +43,14 @@ jobs:
         run: |
           cd ui
           npm run lint
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Validate Dockerfile Build
         run: docker build .

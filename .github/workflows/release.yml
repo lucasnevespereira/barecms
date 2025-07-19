@@ -1,4 +1,4 @@
-name: Release BareCMS
+name: release
 
 on:
   push:
