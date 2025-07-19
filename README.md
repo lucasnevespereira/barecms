@@ -32,7 +32,7 @@ For local development:
 **Clone and setup**
 
 ```bash
-  git clone https://github.com/lucasnevespereira/barecms.git
+  git clone https://github.com/snowztech/barecms.git
   cd barecms
 ```
 
