@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import apiClient from "@/lib/api";
 
 const useDelete = (url: string, redirectUrl: string) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -10,7 +10,7 @@ const useDelete = (url: string, redirectUrl: string) => {
       setIsDeleting(true);
       setError(null);
       try {
-        const res = await axios.delete(url);
+        const res = await apiClient.delete(url);
         if (res.status === 200) {
           window.location.href = redirectUrl;
         } else {

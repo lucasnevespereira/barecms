@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "@/lib/api";
 import { Collection } from "@/types";
 
-export function useGetCollections(url: string) {
+export function useGetCollections(id: string) {
   const [collections, setCollections] = useState<Collection[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +11,7 @@ export function useGetCollections(url: string) {
     const fetchCollections = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(url);
+        const response = await apiClient.get(`/collections/${id}`);
         setCollections(response.data.collections);
       } catch (err: any) {
         setError(err.message || "An error occurred");
@@ -21,7 +21,7 @@ export function useGetCollections(url: string) {
     };
 
     fetchCollections();
-  }, [url]);
+  }, [id]);
 
   return { collections, loading, error };
 }

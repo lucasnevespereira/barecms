@@ -29,6 +29,18 @@ func (h *Handler) GetSite(c *gin.Context) {
 	c.JSON(200, gin.H{"site": site})
 }
 
+func (h *Handler) GetSiteWithCollections(c *gin.Context) {
+	id := c.Param("id")
+
+	siteWithCollections, err := h.Service.GetSiteWithCollections(id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(200, siteWithCollections)
+}
+
 func (h *Handler) CreateSite(c *gin.Context) {
 	var req models.CreateSiteRequest
 

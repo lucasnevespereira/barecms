@@ -33,6 +33,25 @@ func (s *Service) GetSite(id string) (models.Site, error) {
 	return site, nil
 }
 
+func (s *Service) GetSiteWithCollections(id string) (map[string]interface{}, error) {
+	// Get site
+	site, err := s.GetSite(id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get collections for this site
+	collections, err := s.GetCollectionsBySiteID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]interface{}{
+		"site":        site,
+		"collections": collections,
+	}, nil
+}
+
 func (s *Service) CreateSite(request models.CreateSiteRequest) error {
 	newSite := models.Site{
 		ID:     utils.GenerateUniqueID(),

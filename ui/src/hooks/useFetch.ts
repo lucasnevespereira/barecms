@@ -11,13 +11,7 @@ export function useFetch<T = unknown>(url: string) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        console.log("Fetching data from: ", url);
-
-        // Get auth token
-        const token = localStorage.getItem('token');
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-        const response: AxiosResponse<T> = await axios.get(url, { headers });
+        const response: AxiosResponse<T> = await axios.get(url);
         if (isMounted) {
           setData(response.data);
         }

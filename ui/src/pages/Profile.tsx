@@ -1,11 +1,15 @@
-import React from 'react';
-import Loader from '@/components/Loader';
-import { useUser } from '@/hooks/useUser';
-import useDeleteUser from '@/hooks/useDeleteUser';
+import React from "react";
+import Loader from "@/components/Loader";
+import { useUser } from "@/hooks/useUser";
+import useDeleteUser from "@/hooks/useDeleteUser";
 
 const Profile: React.FC = () => {
   const { user, loading, error } = useUser();
-  const { isDeleting, error: deleteError, handleDelete } = useDeleteUser(user?.id as string);
+  const {
+    isDeleting,
+    error: deleteError,
+    handleDelete,
+  } = useDeleteUser(user?.id as string);
 
   if (loading || isDeleting) {
     return <Loader size="lg" />;
@@ -31,12 +35,16 @@ const Profile: React.FC = () => {
       </div>
       <div className="card w-96 mt-5">
         <div className="card-body">
-          {deleteError && <div className="alert alert-error">{deleteError}</div>}
-          <button onClick={handleDelete} className="btn btn-outline btn-error">Delete Account</button>
+          {deleteError && (
+            <div className="alert alert-error">{deleteError}</div>
+          )}
+          <button onClick={handleDelete} className="btn btn-outline btn-error">
+            Delete Account
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default Profile;

@@ -47,11 +47,11 @@ func (s *Service) GetCollectionsBySiteID(siteID string) ([]models.Collection, er
 
 func (s *Service) DeleteCollection(collectionID string) error {
 
-	if err := s.Storage.DeleteCollection(collectionID); err != nil {
+	if err := s.Storage.DeleteEntriesByCollectionID(collectionID); err != nil {
 		return err
 	}
 
-	if err := s.Storage.DeleteEntriesByCollectionIDs([]string{collectionID}); err != nil {
+	if err := s.Storage.DeleteCollection(collectionID); err != nil {
 		return err
 	}
 

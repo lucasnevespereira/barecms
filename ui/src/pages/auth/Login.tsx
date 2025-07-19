@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { Eye, EyeOff, Loader } from 'lucide-react';
+import React, { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff, Loader } from "lucide-react";
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { loading, error, login } = useAuth();
 
@@ -12,8 +12,8 @@ const Login: React.FC = () => {
     e.preventDefault();
     const response = await login(email, password);
     if (response.token) {
-      localStorage.setItem('token', response.token);
-      window.location.href = '/';
+      localStorage.setItem("token", response.token);
+      window.location.href = "/";
     }
   };
 
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="input input-bordered w-full pr-10"
@@ -58,12 +58,18 @@ const Login: React.FC = () => {
               </div>
             </div>
             <div className="form-control mt-6">
-              <button type="submit" className="btn btn-primary" disabled={loading}>
-                {loading ? <Loader size="sm" /> : 'Login'}
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={loading}
+              >
+                {loading ? <Loader size="sm" /> : "Login"}
               </button>
             </div>
           </form>
-          <a href="/register" className="link mt-4"><small>Don't have an account? Register</small></a>
+          <a href="/register" className="link mt-4">
+            <small>Don't have an account? Register</small>
+          </a>
         </div>
       </div>
     </div>

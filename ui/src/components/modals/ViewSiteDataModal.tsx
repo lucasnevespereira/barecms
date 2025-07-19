@@ -9,7 +9,10 @@ interface ViewSiteDataModalProps {
   dialogRef: React.RefObject<HTMLDialogElement>;
 }
 
-const ViewSiteDataModal: React.FC<ViewSiteDataModalProps> = ({ siteSlug, dialogRef }) => {
+const ViewSiteDataModal: React.FC<ViewSiteDataModalProps> = ({
+  siteSlug,
+  dialogRef,
+}) => {
   const { data, loading, error } = useFetch<SiteData>(`/api/${siteSlug}/data`);
   const closeDialog = () => {
     if (dialogRef.current) {
@@ -19,9 +22,10 @@ const ViewSiteDataModal: React.FC<ViewSiteDataModalProps> = ({ siteSlug, dialogR
 
   const copyToClipboard = () => {
     if (data) {
-      navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+      navigator.clipboard
+        .writeText(JSON.stringify(data, null, 2))
         .then()
-        .catch(err => alert("Failed to copy JSON data: " + err));
+        .catch((err) => alert("Failed to copy JSON data: " + err));
     }
   };
 
@@ -37,16 +41,23 @@ const ViewSiteDataModal: React.FC<ViewSiteDataModalProps> = ({ siteSlug, dialogR
               <Clipboard className="cursor-pointer" onClick={copyToClipboard} />
             </div>
             <div className="overflow-auto max-h-[550px] mt-2">
-              <pre className="pretty-json"><code>{JSON.stringify(data, null, 2)}</code></pre>
+              <pre className="pretty-json">
+                <code>{JSON.stringify(data, null, 2)}</code>
+              </pre>
             </div>
           </div>
         )}
-        <form method="dialog" className="modal-backdrop flex justify-end w-full mt-2">
-          <button className="btn" onClick={closeDialog}>Close</button>
+        <form
+          method="dialog"
+          className="modal-backdrop flex justify-end w-full mt-2"
+        >
+          <button className="btn" onClick={closeDialog}>
+            Close
+          </button>
         </form>
       </div>
-    </dialog >
-  )
+    </dialog>
+  );
 };
 
 export default ViewSiteDataModal;

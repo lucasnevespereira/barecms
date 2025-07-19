@@ -25,7 +25,7 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({
     }
   };
 
-  const handleCreateSite = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (siteName.trim() === "") {
       setError("Site name cannot be empty.");
@@ -67,7 +67,7 @@ const CreateSiteModal: React.FC<CreateSiteModalProps> = ({
         <div className="modal-action">
           <button
             disabled={loading}
-            onClick={handleCreateSite}
+            onClick={handleSubmit}
             className="btn btn-primary"
           >
             {loading ? "Creating..." : "Create"}

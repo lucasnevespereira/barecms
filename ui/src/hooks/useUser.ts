@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { User } from '@/types';
-
+import { useState, useEffect } from "react";
+import apiClient from "@/lib/api";
+import { User } from "@/types";
 
 export const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -12,18 +11,18 @@ export const useUser = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
         setLoading(false);
         setUser(null);
         return;
       }
-      const response = await axios.get('/api/auth/user', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await apiClient.get("/auth/user");
       setUser(response.data);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      setError(
+        err.response?.data?.error || "An error occurred. Please try again.",
+      );
     } finally {
       setLoading(false);
     }

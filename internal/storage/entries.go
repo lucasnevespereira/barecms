@@ -41,3 +41,11 @@ func (s *Storage) DeleteEntriesByCollectionIDs(collectionIDs []string) error {
 	}
 	return nil
 }
+
+func (s *Storage) DeleteEntriesByCollectionID(collectionID string) error {
+	deleted := s.DB.Where("collection_id = ?", collectionID).Delete(&EntryDB{})
+	if deleted.Error != nil {
+		return deleted.Error
+	}
+	return nil
+}
