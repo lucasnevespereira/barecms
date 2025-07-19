@@ -1,19 +1,27 @@
-.PHONY: build-ui serve clean
+.PHONY: all help ui up clean logs
 
 UI_DIR := ui
 
-build-ui:
-	@echo "Building ui..."
+all: help
+
+help:
+	@echo "BareCMS Development Commands"
+	@echo ""
+	@echo "  up       - Start the development environment"
+	@echo "  ui       - Build UI (frontend)"
+	@echo "  clean    - Stop and cleanup containers"
+	@echo "  logs     - Show container logs"
+	@echo "  help     - Show this help message"
+	@echo ""
+
+ui:
 	cd $(UI_DIR) && npm install && npm run build
 
-run-ui:
-	@echo "Running ui..."
-	cd $(UI_DIR) && npm run dev
+up:
+	docker compose up
 
-serve: build-ui
-	@echo "Starting Go server..."
-	go run main.go
+clean:
+	docker compose down -v
 
-dev: run-ui
-	@echo "Running Go Server..."
-	go run main.go -dev
+logs:
+	docker compose logs -f

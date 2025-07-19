@@ -7,7 +7,11 @@ interface CreateEntryModalProps {
   dialogRef: React.RefObject<HTMLDialogElement>;
 }
 
-const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, fields, dialogRef }) => {
+const CreateEntryModal: React.FC<CreateEntryModalProps> = ({
+  collectionId,
+  fields,
+  dialogRef,
+}) => {
   const [loading, setLoading] = useState(false);
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [error, setError] = useState<string | null>(null);
@@ -19,29 +23,37 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
   useEffect(() => {
     // Initialize form state with empty values for each field
     const initialFormState: Record<string, any> = {};
-    fields.forEach(field => {
-      initialFormState[field.name] = '';
+    fields.forEach((field) => {
+      initialFormState[field.name] = "";
     });
     setFormState(initialFormState);
   }, [fields]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormState(prevState => ({ ...prevState, [name]: value }));
+    setFormState((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const onAddEntry = async (collectionId: string, fields: Field[], entry: Record<string, any>) => {
+  const onAddEntry = async (
+    collectionId: string,
+    fields: Field[],
+    entry: Record<string, any>
+  ) => {
     console.log("Creating entry", entry, collectionId);
     // Prepare data with types
-    const dataWithTypes = fields.reduce((acc, field) => {
-      acc[field.name] = {
-        value: entry[field.name],
-        type: field.type
-      };
-      return acc;
-    }, {} as Record<string, { value: any; type: string }>);
+    const dataWithTypes = fields.reduce(
+      (acc, field) => {
+        acc[field.name] = {
+          value: entry[field.name],
+          type: field.type,
+        };
+        return acc;
+      },
+      {} as Record<string, { value: any; type: string }>
+    );
     const payload = JSON.stringify({ collectionId, data: dataWithTypes });
-    console.log("payload", payload);
     return await fetch(`/api/entries`, {
       method: "POST",
       headers: {
@@ -49,9 +61,11 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
       },
       body: payload,
     });
-  }
+  };
   const handleSubmit = async () => {
-    const hasEmptyFields = fields.some(field => formState[field.name].trim() === '');
+    const hasEmptyFields = fields.some(
+      (field) => formState[field.name].trim() === ""
+    );
 
     if (hasEmptyFields) {
       setError("All fields are required.");
@@ -75,7 +89,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
 
   const renderFieldInput = (field: Field) => {
     switch (field.type) {
-      case 'url':
+      case "url":
         return (
           <input
             type="url"
@@ -87,7 +101,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
             required
           />
         );
-      case 'string':
+      case "string":
         return (
           <input
             type="text"
@@ -99,7 +113,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
             required
           />
         );
-      case 'number':
+      case "number":
         return (
           <input
             type="number"
@@ -111,7 +125,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
             required
           />
         );
-      case 'boolean':
+      case "boolean":
         return (
           <select
             id={field.name}
@@ -121,12 +135,14 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
             className="select select-bordered w-full"
             required
           >
-            <option disabled selected>Select an option</option>
+            <option disabled selected>
+              Select an option
+            </option>
             <option value="true">True</option>
             <option value="false">False</option>
           </select>
         );
-      case 'date':
+      case "date":
         return (
           <input
             type="date"
@@ -138,7 +154,7 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
             required
           />
         );
-      case 'image':
+      case "image":
         return (
           <input
             type="url"
@@ -171,9 +187,12 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
         <h3 className="font-bold text-lg mb-3">Create new entry</h3>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mt-4">
-          {fields.map(field => (
+          {fields.map((field) => (
             <div key={field.name} className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor={field.name}>
+              <label
+                className="block text-sm font-medium text-gray-700 mb-2"
+                htmlFor={field.name}
+              >
                 {field.name} ({field.type})
               </label>
               {renderFieldInput(field)}
@@ -181,13 +200,19 @@ const CreateEntryModal: React.FC<CreateEntryModalProps> = ({ collectionId, field
           ))}
         </div>
         <div className="modal-action">
-          <button disabled={loading} onClick={handleSubmit} className="btn btn-primary">
+          <button
+            disabled={loading}
+            onClick={handleSubmit}
+            className="btn btn-primary"
+          >
             {loading ? "Creating..." : "Create"}
           </button>
-          <button className="btn" onClick={closeDialog}>Cancel</button>
+          <button className="btn" onClick={closeDialog}>
+            Cancel
+          </button>
         </div>
       </div>
     </dialog>
-  )
-}
+  );
+};
 export default CreateEntryModal;

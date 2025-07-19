@@ -3,61 +3,102 @@ package handlers
 import (
 	"barecms/internal/models"
 	"barecms/internal/utils"
+	"log/slog"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) Login(c *gin.Context) {
 	var request models.LoginRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	user, err := h.Service.Login(request.Email, request.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	token, err := utils.GenerateJWT(user.ID, user.Email)
+	// Generate JWT token
+	token, err := utils.GenerateJWT(user.ID, user.Email, h.Config.JWTSecret)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		slog.Error("Failed to generate JWT token", "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
-
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"user":  user,
+	})
 }
 
 func (h *Handler) Register(c *gin.Context) {
 	var request models.RegisterRequest
-	if err := c.BindJSON(&request); err != nil {
+	if err := c.ShouldBindJSON(&request); err != nil {
+		slog.Error("Failed to bind registration request", "error", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := h.Service.Register(request); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+	slog.Info("Attempting to register user", "email", request.Email, "username", request.Username)
+
+	// Validate JWT secret before proceeding
+	if h.Config.JWTSecret == "" {
+		slog.Error("JWT secret is empty")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Server configuration error"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "User created!"})
+	// Register the user
+	if err := h.Service.Register(request); err != nil {
+		slog.Error("Failed to register user", "error", err, "email", request.Email)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	slog.Info("User registered successfully", "email", request.Email)
+
+	// After successful registration, log the user in
+	user, err := h.Service.Login(request.Email, request.Password)
+	if err != nil {
+		slog.Error("Failed to login after registration", "error", err, "email", request.Email)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Registration successful but login failed"})
+		return
+	}
+
+	slog.Info("User logged in after registration", "user_id", user.ID, "email", user.Email)
+
+	// Generate JWT token
+	token, err := utils.GenerateJWT(user.ID, user.Email, h.Config.JWTSecret)
+	if err != nil {
+		slog.Error("Failed to generate JWT token after registration", "error", err, "user_id", user.ID)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	slog.Info("JWT token generated successfully", "user_id", user.ID)
+
+	c.JSON(http.StatusCreated, gin.H{
+		"token":   token,
+		"user":    user,
+		"message": "User created successfully",
+	})
 }
 
 func (h *Handler) GetUser(c *gin.Context) {
-	tokenString := c.GetHeader("Authorization")
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-
-	jwtClaims, err := utils.ValidateJWT(tokenString)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	user, err := h.Service.GetUser(jwtClaims.UserID)
+	user, err := h.Service.GetUser(userID.(string))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to get user"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
 
@@ -65,13 +106,24 @@ func (h *Handler) GetUser(c *gin.Context) {
 }
 
 func (h *Handler) DeleteUser(c *gin.Context) {
-	userId := c.Param("userId")
+	userID := c.Param("userId")
+	currentUserID, exists := c.Get("user_id")
 
-	err := h.Service.DeleteUser(userId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete user"})
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User deleted!"})
+	// Users can only delete their own account
+	if userID != currentUserID.(string) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Cannot delete other users"})
+		return
+	}
+
+	if err := h.Service.DeleteUser(userID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

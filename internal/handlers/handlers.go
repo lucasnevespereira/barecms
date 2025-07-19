@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"barecms/configs"
 	"barecms/internal/services"
 	"net/http"
 
@@ -9,10 +10,11 @@ import (
 
 type Handler struct {
 	Service *services.Service
+	Config  configs.AppConfig
 }
 
-func NewHandler(service *services.Service) *Handler {
-	return &Handler{Service: service}
+func NewHandler(service *services.Service, config configs.AppConfig) *Handler {
+	return &Handler{Service: service, Config: config}
 }
 
 func (h *Handler) Status(c *gin.Context) {
