@@ -1,4 +1,4 @@
-name: CI
+name: ci
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    name: Lint Code
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,7 +25,7 @@ jobs:
         run: go mod tidy
 
       - name: Go Lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
           version: v2.1
 
@@ -45,7 +45,7 @@ jobs:
           npm run lint
 
   build:
-    name: Build Docker Image
+    name: build docker image
     runs-on: ubuntu-latest
     needs: lint
     steps:
