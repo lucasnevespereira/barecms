@@ -37,12 +37,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.24.4" # Ensure this matches your project's Go version
+          go-version: "1.24.4"
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18" # Ensure this matches your project's Node.js version
+          node-version: "18"
 
       - name: Install UI dependencies and build
         run: |
@@ -72,6 +72,13 @@ jobs:
           cp -r ui/dist barecms-macos-amd64/
           tar -czf barecms-macos-amd64.tar.gz barecms-macos-amd64
 
+      - name: Build and Package macOS ARM64
+        run: |
+          mkdir -p barecms-macos-arm64
+          CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o barecms-macos-arm64/barecms ./cmd/main.go
+          cp -r ui/dist barecms-macos-arm64/
+          tar -czf barecms-macos-arm64.tar.gz barecms-macos-arm64
+
       - name: Upload packaged binaries as artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -80,6 +87,7 @@ jobs:
             barecms-linux-amd64.tar.gz
             barecms-windows-amd64.zip
             barecms-macos-amd64.tar.gz
+            barecms-macos-arm64.tar.gz
 
   build-and-push-docker:
     name: build and push docker image
